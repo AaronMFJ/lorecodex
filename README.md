@@ -1,24 +1,17 @@
-# Lorecodex marketing site
-
-Static marketing site for the Lorecodex iOS app.
+# Lorecodex
 
 ## Files
 
-- `landing.html` — main landing page (set as the site index)
+- `index.html`
 - `faq.html` — FAQ
 - `privacy.html` — privacy policy
 - `support.html` — support contact
-- `index.html` — design canvas (preview of all pages side-by-side; not part of the published site)
 - `shared.css` — global styles
 - `assets/` — app icon + screenshots
-- `design-canvas.jsx` — used only by `index.html` (not published)
 
 ## Deploy to GitHub Pages
 
-1. Create a new public GitHub repo (e.g. `lorecodex-site`).
-2. Drop the contents of this folder into the repo root.
-3. Rename `landing.html` → `index.html` (overwriting the design-canvas index, which you don't need published).
-4. Commit and push.
+
 5. In the repo: **Settings → Pages → Source = `main` branch, `/ (root)`**. Save.
 6. Wait ~1 minute. Your site is live at `https://<your-username>.github.io/lorecodex-site/`.
 
