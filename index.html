@@ -1,0 +1,1157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lorecodex — A companion for your Lorcana collection</title>
+  <meta name="description" content="A friendly, private iOS companion for logging your Disney Lorcana TCG collection. Quick number pad, voice capture, session exports. Free. No ads. No account." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    /* ─── Shared 45° ink-band utilities (echo the app icon) ─── */
+    .ink-bands-bg {
+      position: absolute; inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .ink-bands-bg .band {
+      position: absolute;
+      height: 100%;
+      top: 0;
+      transform: rotate(-45deg);
+      transform-origin: top left;
+    }
+    /* explicit 45° stripe layer */
+    .bands-45 {
+      background-image: repeating-linear-gradient(
+        -45deg,
+        var(--ink-amber)    0px,  var(--ink-amber)    100px,
+        rgba(0,0,0,.92)    100px, rgba(0,0,0,.92)    106px,
+        var(--ink-ruby)    106px, var(--ink-ruby)    220px,
+        rgba(0,0,0,.92)    220px, rgba(0,0,0,.92)    226px,
+        var(--ink-emerald) 226px, var(--ink-emerald) 350px,
+        rgba(0,0,0,.92)    350px, rgba(0,0,0,.92)    356px,
+        var(--ink-amethyst)356px, var(--ink-amethyst)490px,
+        rgba(0,0,0,.92)    490px, rgba(0,0,0,.92)    496px,
+        var(--ink-sapphire)496px, var(--ink-sapphire)620px,
+        rgba(0,0,0,.92)    620px, rgba(0,0,0,.92)    626px,
+        var(--ink-steel)   626px, var(--ink-steel)   750px,
+        rgba(0,0,0,.92)    750px, rgba(0,0,0,.92)    756px
+      );
+    }
+
+    /* ── Top nav ─────────────────────────────── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 32px;
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      background: rgba(15, 11, 9, 0.55);
+      border-bottom: 1px solid var(--dark-line);
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+    .nav-brand .sigil { width: 26px; height: 26px; border-radius: 6px; }
+    .nav-links { display: flex; gap: 28px; font-size: 14px; color: var(--dark-text-2); }
+    .nav-links a:hover { color: var(--dark-text); }
+    .nav .btn { padding: 10px 16px; font-size: 13px; }
+    @media (max-width: 720px) { .nav-links { display: none; } }
+
+    /* ── HERO (card-stack + big icon + ink bands) ─────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 40px;
+      padding: 140px 60px 80px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #0b0807 0%, #120d0a 60%, #0b0807 100%);
+    }
+    /* diagonal accent panel on the right, behind the phones */
+    .hero-bands {
+      position: absolute;
+      right: -20%;
+      top: -10%;
+      width: 120%;
+      height: 140%;
+      opacity: 0.18;
+      transform: translateX(12%);
+      mask-image: radial-gradient(ellipse 60% 70% at 80% 50%, black 0%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse 60% 70% at 80% 50%, black 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: "";
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 0.92  0 0 0 0 0.74  0 0 0 0.04 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+      mix-blend-mode: overlay;
+      pointer-events: none; opacity: 0.5;
+    }
+
+    .hero-copy { position: relative; z-index: 5; max-width: 620px; }
+    .hero-icon-wrap {
+      position: relative;
+      width: 132px; height: 132px;
+      margin-bottom: 36px;
+      display: inline-block;
+    }
+    .hero-icon-wrap img {
+      width: 100%; height: 100%;
+      border-radius: 28px;
+      box-shadow:
+        0 40px 80px -20px rgba(210, 9, 47, 0.45),
+        0 20px 50px -20px rgba(3, 137, 195, 0.35),
+        0 0 0 1px rgba(255,255,255,0.08);
+    }
+    /* soft radial glow behind the icon echoing all 6 inks */
+    .hero-icon-wrap::before {
+      content: "";
+      position: absolute;
+      inset: -30%;
+      background:
+        conic-gradient(from 45deg,
+          var(--ink-amber) 0deg,
+          var(--ink-ruby) 60deg,
+          var(--ink-emerald) 120deg,
+          var(--ink-amethyst) 180deg,
+          var(--ink-sapphire) 240deg,
+          var(--ink-steel) 300deg,
+          var(--ink-amber) 360deg);
+      filter: blur(30px);
+      opacity: 0.28;
+      border-radius: 50%;
+      z-index: -1;
+      animation: slow-rotate 40s linear infinite;
+    }
+    @keyframes slow-rotate { to { transform: rotate(360deg); } }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(52px, 6.5vw, 96px);
+      line-height: 0.98;
+      letter-spacing: -0.02em;
+      margin: 0 0 22px;
+    }
+    .hero h1 em {
+      font-style: italic;
+      background: linear-gradient(100deg, var(--ink-amber) 0%, var(--ink-ruby) 35%, var(--ink-amethyst) 65%, var(--ink-sapphire) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero-sub {
+      font-size: clamp(16px, 1.4vw, 18px);
+      line-height: 1.55;
+      color: var(--dark-text-2);
+      max-width: 52ch;
+      margin: 0 0 32px;
+    }
+    .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px; }
+    .hero-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    /* card-stack on the right (C-style) */
+    .hero-stack {
+      position: relative; z-index: 2;
+      height: 720px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-stack .stack-card {
+      position: absolute;
+      width: 240px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #2a2420, #14100d);
+      padding: 6px;
+      box-shadow:
+        0 50px 100px -30px rgba(0,0,0,.75),
+        0 0 0 1px rgba(255,255,255,.06);
+      transition: transform .4s cubic-bezier(.2,.7,.3,1);
+    }
+    .hero-stack .stack-card .inner { border-radius: 16px; overflow: hidden; aspect-ratio: 460/940; background: #000; }
+    .hero-stack .stack-card .inner img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .hero-stack .s1 { transform: translate(-200px, 30px) rotate(-12deg); }
+    .hero-stack .s2 { transform: translate(-60px, -10px) rotate(-4deg); z-index: 2; }
+    .hero-stack .s3 { transform: translate(90px, 20px) rotate(6deg); z-index: 3; }
+    .hero-stack .s4 { transform: translate(220px, -20px) rotate(14deg); }
+    .hero-stack:hover .s1 { transform: translate(-230px, 20px) rotate(-14deg); }
+    .hero-stack:hover .s4 { transform: translate(250px, -30px) rotate(16deg); }
+
+    @media (max-width: 1200px) {
+      .hero { grid-template-columns: 1fr; padding: 120px 32px 60px; }
+      .hero-stack { height: 540px; margin-top: 20px; }
+      .hero-stack .stack-card { width: 200px; }
+      .hero-stack .s1 { transform: translate(-150px, 20px) rotate(-12deg); }
+      .hero-stack .s2 { transform: translate(-50px, -10px) rotate(-4deg); }
+      .hero-stack .s3 { transform: translate(70px, 20px) rotate(6deg); }
+      .hero-stack .s4 { transform: translate(180px, -20px) rotate(14deg); }
+      .hero-stack:hover .s1 { transform: translate(-170px, 15px) rotate(-14deg); }
+      .hero-stack:hover .s4 { transform: translate(200px, -25px) rotate(16deg); }
+    }
+    @media (max-width: 600px) {
+      .hero-stack { height: 440px; }
+      .hero-stack .stack-card { width: 160px; }
+      .hero-stack .s1 { transform: translate(-110px, 20px) rotate(-12deg); }
+      .hero-stack .s2 { transform: translate(-36px, -10px) rotate(-4deg); }
+      .hero-stack .s3 { transform: translate(54px, 20px) rotate(6deg); }
+      .hero-stack .s4 { transform: translate(140px, -20px) rotate(14deg); }
+    }
+
+    /* ── 45° INK BAND DIVIDER (visible band, icon-style) ── */
+    .ink-band-divider {
+      position: relative;
+      height: 120px;
+      overflow: hidden;
+      background: #0b0807;
+    }
+    .ink-band-divider .bands {
+      position: absolute;
+      inset: -40px -40px;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        var(--ink-amber)    0px,  var(--ink-amber)    90px,
+        #0b0807             90px, #0b0807             96px,
+        var(--ink-ruby)     96px, var(--ink-ruby)     186px,
+        #0b0807            186px, #0b0807            192px,
+        var(--ink-emerald) 192px, var(--ink-emerald) 282px,
+        #0b0807            282px, #0b0807            288px,
+        var(--ink-amethyst)288px, var(--ink-amethyst)378px,
+        #0b0807            378px, #0b0807            384px,
+        var(--ink-sapphire)384px, var(--ink-sapphire)474px,
+        #0b0807            474px, #0b0807            480px,
+        var(--ink-steel)   480px, var(--ink-steel)   570px,
+        #0b0807            570px, #0b0807            576px
+      );
+    }
+
+    /* ── FEATURES (cream) — lead with provided list ─── */
+    .features {
+      background: var(--cream);
+      color: var(--ink-body);
+      padding: 120px 0;
+      position: relative;
+    }
+    .features-header { text-align: center; margin-bottom: 72px; }
+    .features-header h2 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(40px, 5vw, 68px);
+      line-height: 1.04;
+      max-width: 22ch; margin: 12px auto 20px;
+    }
+    .features-header h2 em { font-style: italic; color: var(--ink-amethyst); }
+    .features-header p { max-width: 52ch; margin: 0 auto; color: var(--ink-body-2); font-size: 17px; line-height: 1.55; }
+
+    .f-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+      max-width: 1200px; margin: 0 auto; padding: 0 32px;
+    }
+    .f-card {
+      background: #fff;
+      border-radius: 22px;
+      padding: 32px;
+      border: 1px solid rgba(43,35,25,0.08);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset, 0 18px 40px -30px rgba(43,35,25,0.25);
+      position: relative;
+      overflow: hidden;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .f-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset, 0 28px 60px -30px rgba(43,35,25,0.35);
+    }
+    .f-card .eyebrow { color: var(--ink-body-3); margin-bottom: 14px; }
+    .f-card h3 { font-family: var(--font-display); font-size: 30px; line-height: 1.1; font-weight: 500; margin: 0 0 12px; letter-spacing: -0.01em; }
+    .f-card p { font-size: 15px; line-height: 1.55; color: var(--ink-body-2); margin: 0; }
+    .f-card .visual { margin-top: 22px; }
+
+    .f-c-6 { grid-column: span 6; }
+    .f-c-4 { grid-column: span 4; }
+    .f-c-8 { grid-column: span 8; }
+    .f-c-12 { grid-column: span 12; }
+    @media (max-width: 900px) { .f-c-6, .f-c-4, .f-c-8 { grid-column: span 12; } }
+
+    /* Session mode visual */
+    .sess {
+      padding: 20px; border-radius: 14px;
+      background: linear-gradient(180deg, #1a1410, #120c09);
+      color: var(--dark-text);
+    }
+    .sess-head {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 12px; margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .sess-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 999px;
+      background: rgba(210,9,47,0.12); border: 1px solid rgba(210,9,47,0.3);
+      font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--ink-ruby);
+    }
+    .sess-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-ruby); animation: shimmer 1.2s ease-in-out infinite; }
+    .sess-row {
+      display: grid; grid-template-columns: 3px 1fr auto; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); align-items: center;
+    }
+    .sess-row:last-child { border-bottom: none; }
+    .sess-row .stripe { width: 3px; height: 28px; border-radius: 2px; }
+    .sess-row .name { font-size: 12px; font-weight: 500; }
+    .sess-row .sub { font-size: 10px; color: var(--dark-text-3); font-family: var(--font-mono); margin-top: 2px; }
+    .sess-row .qty { font-size: 10px; font-family: var(--font-mono); padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,0.05); }
+    .sess-row .qty.foil { background: linear-gradient(135deg, var(--ink-sapphire), var(--ink-amethyst), var(--ink-amber)); color: #fff; }
+
+    /* Voice transcript */
+    .voice-box {
+      background: linear-gradient(180deg, #1a1410, #241c17);
+      color: var(--dark-text);
+      border-radius: 14px;
+      padding: 22px;
+      position: relative;
+    }
+    .voice-box .mic {
+      position: absolute; top: 16px; right: 16px;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--ink-ruby);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 0 0 rgba(210,9,47,.6);
+      animation: mic-pulse 2s ease-out infinite;
+    }
+    @keyframes mic-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(210,9,47,.6); }
+      70%  { box-shadow: 0 0 0 16px rgba(210,9,47,0); }
+      100% { box-shadow: 0 0 0 0 rgba(210,9,47,0); }
+    }
+    .voice-transcript {
+      font-family: var(--font-mono);
+      font-size: 15px; line-height: 1.6;
+      color: var(--dark-text-2);
+      margin: 28px 0 10px; padding-right: 40px;
+    }
+    .voice-transcript .live { color: var(--ink-ruby); font-weight: 500; }
+    .voice-transcript .caret {
+      display: inline-block; width: 6px; height: 14px;
+      background: var(--ink-ruby); vertical-align: -2px; margin-left: 2px;
+      animation: shimmer 1s steps(2) infinite;
+    }
+    .voice-tag {
+      font-size: 11px; font-family: var(--font-mono);
+      padding: 4px 10px; border-radius: 6px;
+      background: rgba(255,255,255,0.05);
+      color: var(--dark-text-2);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .voice-tag .mark { color: var(--ink-amber); font-weight: 600; }
+
+    /* Feature device shot */
+    .f-shot {
+      width: 100%;
+      border-radius: 14px;
+      aspect-ratio: 460/600;
+      object-fit: contain;
+      object-position: top;
+      background: #0f0b09;
+      border: 1px solid rgba(43,35,25,0.08);
+    }
+
+    /* ── PRIVACY (dark, with 45° band accent) ── */
+    .privacy {
+      background: var(--dark-bg);
+      color: var(--dark-text);
+      padding: 120px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .privacy-band-left {
+      position: absolute;
+      left: -80px; top: -80px; bottom: -80px;
+      width: 180px;
+      transform: rotate(-45deg); transform-origin: top left;
+      background-image: repeating-linear-gradient(
+        to right,
+        var(--ink-amber) 0, var(--ink-amber) 24px,
+        transparent 24px, transparent 48px,
+        var(--ink-emerald) 48px, var(--ink-emerald) 72px,
+        transparent 72px, transparent 96px,
+        var(--ink-sapphire) 96px, var(--ink-sapphire) 120px,
+        transparent 120px, transparent 144px
+      );
+      opacity: 0.12;
+    }
+    .privacy .wrap { position: relative; z-index: 2; text-align: center; }
+    .privacy h2 {
+      font-family: var(--font-display); font-weight: 500;
+      font-size: clamp(40px, 6vw, 84px);
+      line-height: 1.02; letter-spacing: -0.015em;
+      margin-bottom: 24px;
+    }
+    .privacy h2 em { font-style: italic; color: var(--ink-emerald); }
+    .privacy p { max-width: 54ch; margin: 0 auto 48px; font-size: 17px; line-height: 1.55; color: var(--dark-text-2); }
+
+    .privacy-stats {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+      max-width: 840px; margin: 0 auto;
+    }
+    .privacy-stat {
+      padding: 28px 16px;
+      border: 1px solid var(--dark-line);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.02);
+    }
+    .privacy-stat .n {
+      display: block;
+      font-family: var(--font-display); font-size: 48px; line-height: 1;
+      font-weight: 500; margin-bottom: 8px; letter-spacing: -0.02em;
+    }
+    .privacy-stat .lbl { font-size: 12px; color: var(--dark-text-2); line-height: 1.4; }
+    @media (max-width: 720px) { .privacy-stats { grid-template-columns: repeat(2, 1fr); } }
+
+    /* ── EXPORTS (cream, simpler) ── */
+    .exports {
+      background: var(--cream);
+      color: var(--ink-body);
+      padding: 120px 0;
+    }
+    .exports .wrap { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+    .ex-head { text-align: center; margin-bottom: 56px; }
+    .ex-head h2 {
+      font-family: var(--font-display); font-weight: 500;
+      font-size: clamp(36px, 5vw, 60px); line-height: 1.05;
+      max-width: 24ch; margin: 12px auto 16px;
+    }
+    .ex-head h2 em { font-style: italic; color: var(--ink-sapphire); }
+    .ex-head p { max-width: 48ch; margin: 0 auto; color: var(--ink-body-2); font-size: 16px; line-height: 1.55; }
+    .ex-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    }
+    @media (max-width: 900px) { .ex-grid { grid-template-columns: repeat(2, 1fr); } }
+    .ex-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 24px;
+      border: 1px solid rgba(43,35,25,0.08);
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .ex-card .glyph {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        var(--c1) 0, var(--c1) 10px,
+        rgba(0,0,0,.85) 10px, rgba(0,0,0,.85) 12px,
+        var(--c2) 12px, var(--c2) 22px,
+        rgba(0,0,0,.85) 22px, rgba(0,0,0,.85) 24px
+      );
+      margin-bottom: 6px;
+    }
+    .ex-card h3 { font-family: var(--font-display); font-weight: 500; font-size: 22px; margin: 0; line-height: 1.15; }
+    .ex-card p { font-size: 14px; line-height: 1.5; color: var(--ink-body-2); margin: 0; }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: #0b0807;
+      color: var(--dark-text);
+      padding: 96px 0 40px;
+      border-top: 1px solid var(--dark-line);
+      position: relative;
+      overflow: hidden;
+    }
+    .footer::before {
+      content: "";
+      position: absolute;
+      right: -20%; top: -40%;
+      width: 600px; height: 600px;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        var(--ink-amber)    0, var(--ink-amber)    40px,
+        transparent        40px, transparent        60px,
+        var(--ink-ruby)    60px, var(--ink-ruby)   100px,
+        transparent       100px, transparent       120px,
+        var(--ink-emerald)120px, var(--ink-emerald)160px,
+        transparent       160px, transparent       180px,
+        var(--ink-amethyst)180px, var(--ink-amethyst)220px,
+        transparent       220px, transparent       240px,
+        var(--ink-sapphire)240px, var(--ink-sapphire)280px
+      );
+      opacity: 0.08;
+      transform: rotate(-8deg);
+      pointer-events: none;
+    }
+    .footer .wrap { position: relative; z-index: 2; }
+    .footer-top { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-bottom: 72px; align-items: center; }
+    .footer-top h2 { font-size: clamp(36px, 5vw, 64px); line-height: 1; font-family: var(--font-display); font-weight: 500; letter-spacing: -0.015em; }
+    .footer-top h2 em { font-style: italic; background: linear-gradient(100deg, var(--ink-amber), var(--ink-amethyst), var(--ink-sapphire)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding-top: 32px; border-top: 1px solid var(--dark-line);
+      gap: 40px; flex-wrap: wrap;
+    }
+    .footer-cols { display: flex; gap: 48px; }
+    .footer-col h4 { font-family: var(--font-body); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--dark-text-3); margin-bottom: 14px; font-weight: 500; }
+    .footer-col a { display: block; font-size: 14px; color: var(--dark-text-2); padding: 4px 0; }
+    .footer-col a:hover { color: var(--dark-text); }
+    .footer-disclaimer {
+      max-width: 68ch; font-size: 12px; color: var(--dark-text-3);
+      line-height: 1.6; padding-top: 32px;
+      border-top: 1px solid var(--dark-line); margin-top: 32px;
+    }
+    .footer-disclaimer a { color: var(--dark-text-2); text-decoration: underline; text-decoration-color: rgba(255,255,255,0.2); }
+    @media (max-width: 720px) {
+      .footer-top { grid-template-columns: 1fr; }
+      .footer-cols { flex-wrap: wrap; gap: 32px; }
+    }
+
+    /* reveal */
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity .8s ease, transform .8s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body data-screen-label="landing">
+
+  <!-- ───── NAV ───── -->
+  <nav class="nav">
+    <a class="nav-brand" href="#">
+      <img class="sigil" src="assets/app-icon.png" alt=""/>
+      Lorecodex
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#privacy">Privacy</a>
+      <a href="faq.html">FAQ</a>
+      <a href="support.html">Support</a>
+    </div>
+    <a class="btn btn-primary" href="#download">Download</a>
+  </nav>
+
+  <!-- ───── HERO — big icon, stack of phones, 45° ink bands ───── -->
+  <section class="hero" data-screen-label="hero">
+    <!-- 45° ink-band background tint (echoes app icon) -->
+    <div class="hero-bands bands-45" aria-hidden="true"></div>
+
+    <div class="hero-copy">
+      <div class="hero-icon-wrap">
+        <img src="assets/app-icon.png" alt="Lorecodex app icon"/>
+      </div>
+
+      <h1 data-tw="hero.headline">
+        A friendly <em>codex</em><br/>
+        for your collection.
+      </h1>
+      <p class="hero-sub" data-tw="hero.sub">
+        Lorecodex is a small, private iOS companion to the Lorcana tools you already love.
+        Log what you pull without sorting first, open new packs in a Session, and export
+        just the new cards — no duplicating your collection in Dreamborn.
+      </p>
+
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#download">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11.6 8.4c0-1.9 1.5-2.8 1.6-2.8-.9-1.3-2.3-1.5-2.7-1.5-1.2-.1-2.3.7-2.9.7-.6 0-1.5-.7-2.5-.7-1.3 0-2.4.7-3.1 1.9-1.3 2.3-.3 5.6.9 7.4.6.9 1.4 1.9 2.4 1.9.9 0 1.3-.6 2.5-.6 1.1 0 1.5.6 2.5.6 1 0 1.7-.9 2.3-1.8.7-1 1-2.1 1-2.1s-1.9-.8-2-3zM9.8 2.7c.5-.6.9-1.5.8-2.3-.8 0-1.7.5-2.3 1.2-.5.6-.9 1.5-.8 2.3.9.1 1.8-.5 2.3-1.2z"/></svg>
+          Download on App Store
+        </a>
+        <a class="btn btn-ghost" href="#features">See what's inside →</a>
+      </div>
+
+      <div class="hero-chips" data-tw-section="hero.chips">
+        <span class="ink-chip"><span class="dot" style="background:var(--ink-amber); color:var(--ink-amber);"></span>Free</span>
+        <span class="ink-chip"><span class="dot" style="background:var(--ink-emerald); color:var(--ink-emerald);"></span>No account</span>
+        <span class="ink-chip"><span class="dot" style="background:var(--ink-sapphire); color:var(--ink-sapphire);"></span>No ads</span>
+        <span class="ink-chip"><span class="dot" style="background:var(--ink-ruby); color:var(--ink-ruby);"></span>No tracking</span>
+      </div>
+    </div>
+
+    <div class="hero-stack" data-tw-section="hero.stack">
+      <div class="stack-card s1"><div class="inner"><img src="assets/screen-recents.png" alt=""/></div></div>
+      <div class="stack-card s2"><div class="inner"><img src="assets/screen-browse.png" alt=""/></div></div>
+      <div class="stack-card s3"><div class="inner"><img src="assets/screen-entry.png" alt=""/></div></div>
+      <div class="stack-card s4"><div class="inner"><img src="assets/screen-card-moana.png" alt=""/></div></div>
+    </div>
+  </section>
+
+  <!-- ───── 45° INK BAND DIVIDER ───── -->
+  <div class="ink-band-divider" aria-hidden="true">
+    <div class="bands"></div>
+  </div>
+
+  <!-- ───── FEATURES ───── -->
+  <section class="features" id="features" data-screen-label="features" data-tw-section="section.features">
+    <div class="features-header reveal">
+      <div class="eyebrow" style="justify-content: center; color: var(--ink-body-3);"><span class="gem" style="color: var(--ink-amber); width: 8px; height: 8px;"></span> Features</div>
+      <h2 data-tw="features.headline">Built for the <em>mess</em> of a new release.</h2>
+      <p data-tw="features.sub">Stacks of unsorted cards, a pile of hot singles, and no time to fuss. Here's what Lorecodex does to help.</p>
+    </div>
+
+    <div class="f-grid">
+      <!-- Session mode (hero feature) -->
+      <article class="f-card f-c-6 reveal" data-tw-feat="session">
+        <div class="eyebrow"><span class="gem" style="color: var(--ink-ruby); width: 8px; height: 8px;"></span> Session mode</div>
+        <h3 data-tw="feat.session.title">Export just the new pulls — don't duplicate your collection.</h3>
+        <p data-tw="feat.session.body">Start a Session when you crack a box. New cards go into your permanent collection <em>and</em> into a session bundle. Export the session on its own to Dreamborn — clean, no overlap.</p>
+        <div class="visual">
+          <div class="sess">
+            <div class="sess-head">
+              <span class="sess-pill"><span class="dot"></span>Session 1</span>
+              <span class="mono" style="color: var(--dark-text-3);">28 cards</span>
+            </div>
+            <div class="sess-row">
+              <div class="stripe" style="background:var(--ink-amber)"></div>
+              <div><div class="name">Hercules — Spectral Demigod</div><div class="sub">S11 · #214</div></div>
+              <div class="qty foil">+1 Foil</div>
+            </div>
+            <div class="sess-row">
+              <div class="stripe" style="background:var(--ink-sapphire)"></div>
+              <div><div class="name">Moana — Curious Explorer</div><div class="sub">S11 · #242</div></div>
+              <div class="qty foil">+1 Foil</div>
+            </div>
+            <div class="sess-row">
+              <div class="stripe" style="background:var(--ink-emerald)"></div>
+              <div><div class="name">David — Protective Snowboarder</div><div class="sub">S11 · #9</div></div>
+              <div class="qty">+1</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Voice capture (beta) -->
+      <article class="f-card f-c-6 reveal" data-tw-feat="voice">
+        <div class="eyebrow"><span class="gem" style="color: var(--ink-amethyst); width: 8px; height: 8px;"></span> Voice capture · beta</div>
+        <h3 data-tw="feat.voice.title">Say it — "set 4, card 188, foil" — and it's logged.</h3>
+        <p data-tw="feat.voice.body">Hands full of cards? Call them out. Speech runs 100% on-device. Voice-added cards are marked with an asterisk so you can spot-check later.</p>
+        <div class="visual">
+          <div class="voice-box">
+            <div class="mic" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+            </div>
+            <div class="voice-transcript">"Set four, card one eighty-eight, <span class="live">foil<span class="caret"></span></span>"</div>
+            <div style="display:flex; gap: 6px; flex-wrap: wrap;">
+              <span class="voice-tag"><span class="mark">✓</span> On-device</span>
+              <span class="voice-tag">Marked <span class="mark">*</span> for review</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Number pad -->
+      <article class="f-card f-c-4 reveal" data-tw-feat="entry">
+        <div class="eyebrow"><span class="gem" style="color: var(--ink-amber); width: 8px; height: 8px;"></span> Quick entry</div>
+        <h3 data-tw="feat.entry.title">Set pad + card pad.</h3>
+        <p data-tw="feat.entry.body">Two separate selectors so you don't need to pre-sort. Pick a set once, thumb card numbers. Normal or foil, one tap.</p>
+        <div class="visual">
+          <img class="f-shot" src="assets/screen-entry.png" alt="Capture screen with number pad"/>
+        </div>
+      </article>
+
+      <!-- Recents -->
+      <article class="f-card f-c-4 reveal" data-tw-feat="recents">
+        <div class="eyebrow"><span class="gem" style="color: var(--ink-emerald); width: 8px; height: 8px;"></span> Recents</div>
+        <h3 data-tw="feat.recents.title">See every capture land.</h3>
+        <p data-tw="feat.recents.body">Successes and failures appear inline in the order you added them. Misread a voice capture? Tap to fix it.</p>
+        <div class="visual">
+          <img class="f-shot" src="assets/screen-recents-fail.png" alt="Recents list"/>
+        </div>
+      </article>
+
+      <!-- Browse -->
+      <article class="f-card f-c-4 reveal" data-tw-feat="browse">
+        <div class="eyebrow"><span class="gem" style="color: var(--ink-sapphire); width: 8px; height: 8px;"></span> Browse &amp; collection</div>
+        <h3 data-tw="feat.browse.title">Every released card, every view.</h3>
+        <p data-tw="feat.browse.body">Browse the full catalogue — sets, starter decks, promos. Collection browser supports multiple views and filters.</p>
+        <div class="visual">
+          <img class="f-shot" src="assets/screen-browse.png" alt="Browse sets"/>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ───── PRIVACY CALLOUT ───── -->
+  <section class="privacy" id="privacy" data-screen-label="privacy" data-tw-section="section.privacy">
+    <div class="privacy-band-left" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="eyebrow" style="justify-content: center; color: var(--dark-text-3);"><span class="gem" style="color: var(--ink-emerald); width: 8px; height: 8px;"></span> Quietly private</div>
+      <h2 data-tw="privacy.headline">Private by nature, <em>not by policy.</em></h2>
+      <p data-tw="privacy.sub">Your collection lives on your device. Voice recognition runs on your device. No account, no analytics, no third-party SDKs. There's almost nothing to say about the data — which is the point.</p>
+
+      <div class="privacy-stats" data-tw-section="privacy.stats">
+        <div class="privacy-stat"><span class="n" style="color:var(--ink-amber)">0</span><span class="lbl">third-party SDKs</span></div>
+        <div class="privacy-stat"><span class="n" style="color:var(--ink-emerald)">0</span><span class="lbl">analytics events</span></div>
+        <div class="privacy-stat"><span class="n" style="color:var(--ink-sapphire)">100%</span><span class="lbl">on-device speech</span></div>
+        <div class="privacy-stat"><span class="n" style="color:var(--ink-ruby)">$0</span><span class="lbl">ever · no IAP</span></div>
+      </div>
+
+      <div style="margin-top: 40px;">
+        <a class="btn btn-ghost" href="privacy.html">Read the full privacy policy →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── EXPORTS / INTEGRATIONS ───── -->
+  <section class="exports" id="integrations" data-screen-label="exports" data-tw-section="section.exports">
+    <div class="wrap">
+      <div class="ex-head reveal">
+        <div class="eyebrow" style="justify-content: center; color: var(--ink-body-3);"><span class="gem" style="color: var(--ink-sapphire); width: 8px; height: 8px;"></span> Plays well with others</div>
+        <h2 data-tw="exports.headline">A <em>companion</em>, not a replacement.</h2>
+        <p data-tw="exports.sub">Import what you have. Export where you need. Sync across your devices.</p>
+      </div>
+
+      <div class="ex-grid">
+        <div class="ex-card reveal" data-tw-ex="dreamborn">
+          <div class="glyph" style="--c1: var(--ink-amethyst); --c2: var(--ink-ruby);"></div>
+          <h3>Import from Dreamborn</h3>
+          <p>Drop in your Dreamborn export - counts and foils come along for the ride.</p>
+        </div>
+        <div class="ex-card reveal" data-tw-ex="export">
+          <div class="glyph" style="--c1: var(--ink-sapphire); --c2: var(--ink-emerald);"></div>
+          <h3>Export to Dreamborn or Lorcana.gg</h3>
+          <p>Full collection or just the current session. Uses the iOS share sheet.</p>
+        </div>
+        <div class="ex-card reveal" data-tw-ex="icloud">
+          <div class="glyph" style="--c1: var(--ink-emerald); --c2: var(--ink-amber);"></div>
+          <h3>iCloud sync</h3>
+          <p>Your collection follows you across your iPhone and iPad.</p>
+        </div>
+        <div class="ex-card reveal" data-tw-ex="backup">
+          <div class="glyph" style="--c1: var(--ink-amber); --c2: var(--ink-steel);"></div>
+          <h3>Backup anytime</h3>
+          <p>One-tap backup of your whole collection - keep a copy on the side.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── FOOTER ───── -->
+  <footer class="footer" id="download" data-screen-label="footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div>
+          <h2 data-tw="final.headline">Start your <em>codex</em>.</h2>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <p data-tw="final.sub" style="color: var(--dark-text-2); font-size: 16px; line-height: 1.5; max-width: 44ch;">Free on the App Store. No sign-up required.</p>
+          <p data-tw="final.hello" style="color: var(--dark-text-2); font-size: 15px; line-height: 1.5; max-width: 44ch; margin: 0;">Have an idea, found a bug, or just want to say hi? I'd love to hear from you.</p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a class="btn btn-primary" href="#">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M11.6 8.4c0-1.9 1.5-2.8 1.6-2.8-.9-1.3-2.3-1.5-2.7-1.5-1.2-.1-2.3.7-2.9.7-.6 0-1.5-.7-2.5-.7-1.3 0-2.4.7-3.1 1.9-1.3 2.3-.3 5.6.9 7.4.6.9 1.4 1.9 2.4 1.9.9 0 1.3-.6 2.5-.6 1.1 0 1.5.6 2.5.6 1 0 1.7-.9 2.3-1.8.7-1 1-2.1 1-2.1s-1.9-.8-2-3zM9.8 2.7c.5-.6.9-1.5.8-2.3-.8 0-1.7.5-2.3 1.2-.5.6-.9 1.5-.8 2.3.9.1 1.8-.5 2.3-1.2z"/></svg>
+              Download on the App Store
+            </a>
+            <button class="btn btn-ghost js-mail" type="button" aria-label="Email Aaron">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+              Email Aaron
+            </button>
+            <a class="btn btn-ghost" href="https://ko-fi.com/jonesydev" target="_blank" rel="noopener" aria-label="Tip on Ko-fi">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13a4 4 0 0 1 0 8h-1"/><path d="M4 8v8a3 3 0 0 0 3 3h7a3 3 0 0 0 3-3V8z"/><path d="M8 2v3M12 2v3"/></svg>
+              Tip on Ko-fi
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="nav-brand">
+          <img class="sigil" src="assets/app-icon.png" alt="" style="width:26px; height:26px; border-radius: 6px;"/>
+          Lorecodex
+        </div>
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4>Product</h4>
+            <a href="#features">Features</a>
+            <a href="#privacy">Privacy</a>
+            <a href="#integrations">Exports</a>
+          </div>
+          <div class="footer-col">
+            <h4>Docs</h4>
+            <a href="faq.html">FAQ</a>
+            <a href="support.html">Support</a>
+            <a href="privacy.html">Privacy Policy</a>
+          </div>
+          <div class="footer-col">
+            <h4>Contact</h4>
+            <a href="#" class="js-mail">Email Aaron</a>
+          </div>
+        </div>
+      </div>
+
+      <p class="footer-disclaimer">
+        Lorecodex uses trademarks and/or copyrights associated with Disney Lorcana TCG, used under <a href="https://cdn.ravensburger.com/lorcana/community-code-en" target="_blank" rel="noopener">Ravensburger's Community Code Policy</a>. I am expressly prohibited from charging you to use or access this content. Lorecodex is not published, endorsed, or specifically approved by Disney or Ravensburger. For more information about Disney Lorcana TCG, visit <a href="https://www.disneylorcana.com/en-US/" target="_blank" rel="noopener">disneylorcana.com</a>. Card data provided by Lorcast.
+        <br/><br/>
+        © 2026 Aaron Jones - I hope you do something that makes you smile today.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // Bot-resistant email: assembled at click time from split parts, no plaintext in DOM or source.
+    (function(){
+      const p1 = ['l','o','r','e'].join('');
+      const p2 = ['c','o','d','e','x'].join('');
+      const p3 = String.fromCharCode(64); // @
+      const p4 = ['a','a','r','o','n','m','f','j'].join('');
+      const p5 = String.fromCharCode(46) + 'com'; // .com
+      const build = () => p1 + p2 + p3 + p4 + p5;
+      document.querySelectorAll('.js-mail').forEach(btn => {
+        btn.addEventListener('click', (ev) => {
+          ev.preventDefault();
+          const addr = build();
+          const subject = encodeURIComponent('Lorecodex - hello');
+          window.location.href = 'mail' + 'to:' + addr + '?subject=' + subject;
+        });
+        btn.addEventListener('mouseenter', () => { btn.setAttribute('title', 'Opens your mail app'); }, { once: true });
+      });
+    })();
+  </script>
+
+  <!-- ───── TWEAKS ───── -->
+  <script>
+  (function(){
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "heroHeadline": "A friendly Lore\u003cem>codex\u003c\/em>\u003cbr\/>for your collection.",
+      "heroSub": "Lorecodex is a privacy-first, small iOS app intended as a companion to other Lorcana collection tracking tools. Easily log your collection without hunting for them in a list or pre-sorting them. Open new packs in Session Mode - save and export just the new cards without duplicating collection to Dreamborn or Lorcana.gg. No account required.",
+      "featuresHeadline": "Built to record cards \u003cem>without\u003c\/em> pre-sorting",
+      "featuresSub": "I'm a dad with limited time and built this to solve stacks of unsorted cards, growing and growing, and no time to sort for Dreamborn. Here's what Lorecodex does to help.",
+      "privacyHeadline": "Private by \u003cem>principle\u003c\/em>, not by policy.",
+      "privacySub": "Your collection lives on your device. Voice recognition runs on your device. No account, no analytics, no third-party SDKs. I collect and track absolutely nothing. Everything should be that way.",
+      "exportsHeadline": "A \u003cem>companion\u003c\/em>, not a replacement.",
+      "exportsSub": "Import what you have. Export where you need. Sync across your devices.",
+      "finalHeadline": "Start your Lore\u003cem>codex\u003c\/em>.",
+      "finalSub": "Free on the App Store. No account required.",
+      "featSessionTitle": "Export just the new pulls - don't duplicate your collection.",
+      "featSessionBody": "Start a Session when you open new packs. New cards go into your permanent collection \u003cem>and\u003c\/em> into a session bundle. Export the session on its own to Dreamborn or Lorcana.gg.",
+      "featVoiceTitle": "Capture with voice - \"set 4, card 188, foil\" ",
+      "featVoiceBody": "Want to quickly record cards without tapping? Call them out. Speech runs 100% on-device. Voice-added cards are marked with an asterisk so you can spot-check later. Live view of the voice parsing.",
+      "featEntryTitle": "Set pad + card pad.",
+      "featEntryBody": "Two separate selectors so you don't need to pre-sort. Tap your set, enter your card. Normal or foil, one tap.",
+      "featRecentsTitle": "See every capture land.",
+      "featRecentsBody": "Successes and failures appear inline in the order you added them, so if you can find where the failure happened.",
+      "featBrowseTitle": "Browse and add.",
+      "featBrowseBody": "Browse the full catalogue: sets, starter decks, promos. Collection browser supports multiple views and filters.",
+      "inkAmber": "#F3B300",
+      "inkAmethyst": "#80387B",
+      "inkEmerald": "#288A34",
+      "inkRuby": "#D2092F",
+      "inkSapphire": "#0389C3",
+      "inkSteel": "#9FA9B3",
+      "accentHeadline": "rainbow",
+      "heroImageCount": 4,
+      "showFeatSession": true,
+      "showFeatVoice": true,
+      "showFeatEntry": true,
+      "showFeatRecents": true,
+      "showFeatBrowse": true,
+      "showExDreamborn": true,
+      "showExExport": true,
+      "showExIcloud": true,
+      "showExBackup": true,
+      "showPrivacySection": true,
+      "showExportsSection": true,
+      "showPrivacyStats": false,
+      "showHeroChips": true,
+      "bandOpacity": 0.18,
+      "ans__basics-1": "No. Lorecodex is free. No in-app purchases, no subscriptions, no ads. It's a hobby project by me, so solve my problems. I hope it solves yours, too.",
+      "ans__basics-3": "iPhone and iPad running iOS 17 or later. A Mac (Apple silicon) can run it via iPad compatibility, though it's designed for touch. I only have tested it on my iPhone 16 + various iPhones in xcode simulators.",
+      "ans__capture-0": "There are two selectors. The horizontal row at the top is the \u003cstrong>set\u003c\/strong>; the grid is the \u003cstrong>card number\u003c\/strong>. Pick a set once, then type card numbers and hit Add. Set stays selected until you change it or delete it.",
+      "ans__capture-1": "Yes! There's a Normal\/Foil toggle above the pad. Voice capture also understands \"foil\" at the end of a phrase.",
+      "ans__capture-2": "Tap the mic and say something like \u003ccode>\"set 4, card 188, foil\"\u003c\/code>. Set numbers, card numbers, and the word \"foil\" all parse into an entry. Speech recognition runs 100% on-device via Apple's Speech framework — nothing leaves your phone.&nbsp;\u003cbr>\u003cbr>It's a fun way to add cards, but on-device models sometimes mishear. Every voice-added card gets an asterisk in your collection so you can spot-check later. If a phrase doesn't parse, it's held in Recents so you can tap to fix or dismiss it.",
+      "sum__capture-2": "Voice capture.",
+      "show_q__capture-3": false,
+      "ans__capture-4": "It shows the last captures, successful or failed, in order. Tap a failed entry to correct it. Helpful for yappin' off a bunch of cards in voice or tippy-tapping in text and see, in order you added them, where it failed. You shouldn't need to compare one-to-one to find the missing card.",
+      "ans__sessions-0": "When you open new packs, you only want to share the new cards - not a re-export of your entire collection. Start a session, add cards as normal (they also go into your permanent collection), then end the session and export it (Export &gt; Scope &gt; Session). Delete sessions when you want, in Settings.",
+      "ans__sessions-1": "You can't have simultaneous sessions. End one and start another when get new cards. Past session exports are kept as CSVs you can re-share from the Files app.",
+      "ans__privacy-sync-0": "Feedback messages, if you send them through the in-app form. No analytics, no crash reporters, no third-party SDKs, no audio tracking. I can delete those message on request and I purge them after reading anyways.",
+      "ans__app-0": "It is I, Aaron Jones, as a hobby project. It's not a company, not a service, not a startup. Just a tool I wanted for my own collection and figured others might want too.",
+      "ans__app-2": "No. Maybe in the future."
+    }/*EDITMODE-END*/;
+
+    const state = Object.assign({}, TWEAK_DEFAULTS);
+
+    const TEXT_MAP = {
+      heroHeadline: '[data-tw="hero.headline"]',
+      heroSub: '[data-tw="hero.sub"]',
+      featuresHeadline: '[data-tw="features.headline"]',
+      featuresSub: '[data-tw="features.sub"]',
+      privacyHeadline: '[data-tw="privacy.headline"]',
+      privacySub: '[data-tw="privacy.sub"]',
+      exportsHeadline: '[data-tw="exports.headline"]',
+      exportsSub: '[data-tw="exports.sub"]',
+      finalHeadline: '[data-tw="final.headline"]',
+      finalSub: '[data-tw="final.sub"]',
+      featSessionTitle: '[data-tw="feat.session.title"]',
+      featSessionBody: '[data-tw="feat.session.body"]',
+      featVoiceTitle: '[data-tw="feat.voice.title"]',
+      featVoiceBody: '[data-tw="feat.voice.body"]',
+      featEntryTitle: '[data-tw="feat.entry.title"]',
+      featEntryBody: '[data-tw="feat.entry.body"]',
+      featRecentsTitle: '[data-tw="feat.recents.title"]',
+      featRecentsBody: '[data-tw="feat.recents.body"]',
+      featBrowseTitle: '[data-tw="feat.browse.title"]',
+      featBrowseBody: '[data-tw="feat.browse.body"]'
+    };
+
+    const COLOR_MAP = {
+      inkAmber: '--ink-amber',
+      inkAmethyst: '--ink-amethyst',
+      inkEmerald: '--ink-emerald',
+      inkRuby: '--ink-ruby',
+      inkSapphire: '--ink-sapphire',
+      inkSteel: '--ink-steel'
+    };
+
+    const TOGGLE_MAP = {
+      showFeatSession:   { sel: '[data-tw-feat="session"]' },
+      showFeatVoice:     { sel: '[data-tw-feat="voice"]' },
+      showFeatEntry:     { sel: '[data-tw-feat="entry"]' },
+      showFeatRecents:   { sel: '[data-tw-feat="recents"]' },
+      showFeatBrowse:    { sel: '[data-tw-feat="browse"]' },
+      showExDreamborn:   { sel: '[data-tw-ex="dreamborn"]' },
+      showExExport:      { sel: '[data-tw-ex="export"]' },
+      showExIcloud:      { sel: '[data-tw-ex="icloud"]' },
+      showExBackup:      { sel: '[data-tw-ex="backup"]' },
+      showPrivacySection:{ sel: '[data-tw-section="section.privacy"]' },
+      showExportsSection:{ sel: '[data-tw-section="section.exports"]' },
+      showPrivacyStats:  { sel: '[data-tw-section="privacy.stats"]' },
+      showHeroChips:     { sel: '[data-tw-section="hero.chips"]' }
+    };
+
+    function applyAll(){
+      // Text
+      for (const k in TEXT_MAP){
+        document.querySelectorAll(TEXT_MAP[k]).forEach(el => { el.innerHTML = state[k]; });
+      }
+      // Colors
+      const root = document.documentElement;
+      for (const k in COLOR_MAP){ root.style.setProperty(COLOR_MAP[k], state[k]); }
+      // Toggles
+      for (const k in TOGGLE_MAP){
+        document.querySelectorAll(TOGGLE_MAP[k].sel).forEach(el => {
+          el.style.display = state[k] ? '' : 'none';
+        });
+      }
+      // Headline accent style
+      const accent = state.accentHeadline;
+      root.style.setProperty('--accent-em-color', 
+        accent === 'amber' ? state.inkAmber :
+        accent === 'amethyst' ? state.inkAmethyst :
+        accent === 'emerald' ? state.inkEmerald :
+        accent === 'ruby' ? state.inkRuby :
+        accent === 'sapphire' ? state.inkSapphire : 'inherit'
+      );
+      if (accent === 'rainbow') {
+        document.body.classList.add('tw-rainbow-em');
+      } else {
+        document.body.classList.remove('tw-rainbow-em');
+      }
+      // Hero image count
+      const stack = document.querySelectorAll('.hero-stack .stack-card');
+      stack.forEach((el, i) => { el.style.display = (i < state.heroImageCount) ? '' : 'none'; });
+      // Band opacity
+      document.querySelectorAll('.hero-bands').forEach(el => { el.style.opacity = state.bandOpacity; });
+    }
+
+    // Rainbow EM style
+    const s = document.createElement('style');
+    s.textContent = `
+      body.tw-rainbow-em .hero em,
+      body.tw-rainbow-em .features h2 em,
+      body.tw-rainbow-em .final-cta em {}
+      body:not(.tw-rainbow-em) .hero h1 em,
+      body:not(.tw-rainbow-em) .features-header h2 em,
+      body:not(.tw-rainbow-em) .footer-top h2 em {
+        background: none !important; -webkit-text-fill-color: var(--accent-em-color) !important; color: var(--accent-em-color) !important;
+      }
+    `;
+    document.head.appendChild(s);
+
+    // ── Panel UI ──────────────────────────────
+    const panel = document.createElement('div');
+    panel.id = 'tw-panel';
+    panel.innerHTML = `
+      <div class="tw-head">
+        <div class="tw-title">Tweaks</div>
+        <button class="tw-close" aria-label="close">×</button>
+      </div>
+      <div class="tw-body"></div>
+      <div class="tw-foot">
+        <button class="tw-reset">Reset all</button>
+      </div>
+    `;
+    const panelStyles = document.createElement('style');
+    panelStyles.textContent = `
+      #tw-panel {
+        position: fixed; right: 20px; bottom: 20px; z-index: 9999;
+        width: 340px; max-height: 80vh; display: none;
+        background: #0f0b09; color: #f5ecd9;
+        border: 1px solid rgba(243,231,211,0.18); border-radius: 16px;
+        font-family: var(--font-body), system-ui;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        flex-direction: column; overflow: hidden;
+      }
+      #tw-panel.open { display: flex; }
+      #tw-panel .tw-head { display:flex; justify-content:space-between; align-items:center; padding: 14px 18px; border-bottom: 1px solid rgba(243,231,211,0.1); }
+      #tw-panel .tw-title { font-family: var(--font-display); font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
+      #tw-panel .tw-close { background: none; border: none; color: inherit; font-size: 22px; cursor: pointer; line-height: 1; width: 26px; height: 26px; border-radius: 6px; }
+      #tw-panel .tw-close:hover { background: rgba(255,255,255,0.08); }
+      #tw-panel .tw-body { padding: 12px 16px; overflow-y: auto; flex: 1; }
+      #tw-panel .tw-body::-webkit-scrollbar { width: 6px; }
+      #tw-panel .tw-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+      #tw-panel .tw-group { margin-bottom: 18px; }
+      #tw-panel .tw-group-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(245,236,217,0.5); margin: 6px 0 10px; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px; }
+      #tw-panel label { display: block; font-size: 12px; color: rgba(245,236,217,0.72); margin: 10px 0 4px; }
+      #tw-panel .tw-text, #tw-panel textarea {
+        width: 100%; background: rgba(255,255,255,0.04); color: #f5ecd9;
+        border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 10px;
+        font-family: inherit; font-size: 12px; resize: vertical; line-height: 1.4;
+      }
+      #tw-panel textarea { min-height: 50px; }
+      #tw-panel .tw-text:focus, #tw-panel textarea:focus { outline: none; border-color: rgba(255,255,255,0.3); }
+      #tw-panel .tw-row { display:flex; align-items:center; justify-content:space-between; padding: 4px 0; gap: 10px; }
+      #tw-panel .tw-row label { margin: 0; flex: 1; }
+      #tw-panel input[type=checkbox] { accent-color: #F3B300; width: 14px; height: 14px; cursor: pointer; }
+      #tw-panel input[type=color] { width: 36px; height: 24px; padding: 0; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; background: transparent; cursor: pointer; }
+      #tw-panel input[type=range] { flex: 1; accent-color: #F3B300; }
+      #tw-panel select { background: rgba(255,255,255,0.04); color: #f5ecd9; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 4px 8px; font-size: 12px; font-family: inherit; }
+      #tw-panel .tw-foot { padding: 12px 18px; border-top: 1px solid rgba(243,231,211,0.1); display: flex; justify-content: flex-end; }
+      #tw-panel .tw-reset { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: #f5ecd9; padding: 6px 12px; border-radius: 8px; font-family: inherit; font-size: 12px; cursor: pointer; }
+      #tw-panel .tw-reset:hover { background: rgba(255,255,255,0.06); }
+      #tw-panel .tw-color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      #tw-panel .tw-color-cell { display: flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(245,236,217,0.72); }
+    `;
+    document.head.appendChild(panelStyles);
+    document.body.appendChild(panel);
+
+    const body = panel.querySelector('.tw-body');
+
+    function group(title, html){
+      return `<div class="tw-group"><div class="tw-group-title">${title}</div>${html}</div>`;
+    }
+    function txt(k, label, long){
+      const tag = long ? 'textarea' : 'input';
+      const attr = long ? '' : 'type="text" class="tw-text"';
+      return `<label>${label}</label><${tag} data-tw-key="${k}" ${attr}>${long ? state[k] : ''}</${tag === 'textarea' ? 'textarea' : 'input'}>`.replace(/<input([^>]*)><\/input>/, `<input$1 value="${String(state[k]).replace(/"/g,'&quot;')}">`);
+    }
+    function tog(k, label){
+      return `<div class="tw-row"><label>${label}</label><input type="checkbox" data-tw-key="${k}" ${state[k]?'checked':''}></div>`;
+    }
+    function col(k, label){
+      return `<div class="tw-color-cell"><input type="color" data-tw-key="${k}" value="${state[k]}"><span>${label}</span></div>`;
+    }
+    function sld(k, label, min, max, step){
+      return `<label>${label}: <span data-tw-val="${k}">${state[k]}</span></label><input type="range" data-tw-key="${k}" min="${min}" max="${max}" step="${step}" value="${state[k]}">`;
+    }
+    function sel(k, label, opts){
+      return `<label>${label}</label><select data-tw-key="${k}">${opts.map(o=>`<option value="${o}" ${state[k]===o?'selected':''}>${o}</option>`).join('')}</select>`;
+    }
+
+    body.innerHTML =
+      group('Hero',
+        txt('heroHeadline','Headline',true) +
+        txt('heroSub','Subcopy',true) +
+        sld('heroImageCount','Hero screens',1,4,1) +
+        tog('showHeroChips','Show chips (Free / No account …)')
+      ) +
+      group('Features — copy',
+        txt('featuresHeadline','Section headline',true) +
+        txt('featuresSub','Section subcopy',true) +
+        txt('featSessionTitle','Session title',true) +
+        txt('featSessionBody','Session body',true) +
+        txt('featVoiceTitle','Voice title',true) +
+        txt('featVoiceBody','Voice body',true) +
+        txt('featEntryTitle','Entry title',true) +
+        txt('featEntryBody','Entry body',true) +
+        txt('featRecentsTitle','Recents title',true) +
+        txt('featRecentsBody','Recents body',true) +
+        txt('featBrowseTitle','Browse title',true) +
+        txt('featBrowseBody','Browse body',true)
+      ) +
+      group('Features — show / hide',
+        tog('showFeatSession','Session mode') +
+        tog('showFeatVoice','Voice capture') +
+        tog('showFeatEntry','Quick entry') +
+        tog('showFeatRecents','Recents') +
+        tog('showFeatBrowse','Browse & collection')
+      ) +
+      group('Privacy',
+        txt('privacyHeadline','Headline',true) +
+        txt('privacySub','Subcopy',true) +
+        tog('showPrivacyStats','Show stat tiles') +
+        tog('showPrivacySection','Show whole section')
+      ) +
+      group('Exports — copy',
+        txt('exportsHeadline','Headline',true) +
+        txt('exportsSub','Subcopy',true)
+      ) +
+      group('Exports — show / hide',
+        tog('showExDreamborn','Import from Dreamborn') +
+        tog('showExExport','Export to Dreamborn/Lorcana.gg') +
+        tog('showExIcloud','iCloud sync') +
+        tog('showExBackup','Backup anytime') +
+        tog('showExportsSection','Show whole section')
+      ) +
+      group('Final CTA',
+        txt('finalHeadline','Headline',true) +
+        txt('finalSub','Subcopy',true)
+      ) +
+      group('Ink colors',
+        `<div class="tw-color-grid">` +
+        col('inkAmber','Amber') + col('inkAmethyst','Amethyst') + col('inkEmerald','Emerald') +
+        col('inkRuby','Ruby') + col('inkSapphire','Sapphire') + col('inkSteel','Steel') +
+        `</div>` +
+        sel('accentHeadline','Headline accent color', ['rainbow','amber','amethyst','emerald','ruby','sapphire']) +
+        sld('bandOpacity','Hero ink-band opacity',0,0.6,0.02)
+      );
+
+    // Wire up inputs
+    body.addEventListener('input', (e) => {
+      const t = e.target; const k = t.getAttribute('data-tw-key'); if (!k) return;
+      let v;
+      if (t.type === 'checkbox') v = t.checked;
+      else if (t.type === 'range' || t.type === 'number') v = parseFloat(t.value);
+      else v = t.value;
+      state[k] = v;
+      const disp = body.querySelector(`[data-tw-val="${k}"]`); if (disp) disp.textContent = v;
+      applyAll();
+      persist({ [k]: v });
+    });
+
+    panel.querySelector('.tw-close').addEventListener('click', () => deactivate());
+    panel.querySelector('.tw-reset').addEventListener('click', () => {
+      Object.assign(state, TWEAK_DEFAULTS);
+      rebuild();
+      applyAll();
+      persist(TWEAK_DEFAULTS);
+    });
+
+    function rebuild(){
+      body.querySelectorAll('[data-tw-key]').forEach(el => {
+        const k = el.getAttribute('data-tw-key');
+        if (el.type === 'checkbox') el.checked = !!state[k];
+        else if (el.tagName === 'TEXTAREA') el.value = state[k];
+        else el.value = state[k];
+        const disp = body.querySelector(`[data-tw-val="${k}"]`); if (disp) disp.textContent = state[k];
+      });
+    }
+
+    function persist(edits){
+      try { window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*'); } catch(e){}
+    }
+
+    function activate(){ panel.classList.add('open'); }
+    function deactivate(){ panel.classList.remove('open'); }
+
+    window.addEventListener('message', (e) => {
+      const d = e.data; if (!d || !d.type) return;
+      if (d.type === '__activate_edit_mode') activate();
+      if (d.type === '__deactivate_edit_mode') deactivate();
+    });
+    try { window.parent.postMessage({ type: '__edit_mode_available' }, '*'); } catch(e){}
+
+    applyAll();
+  })();
+  </script>
+</body>
+</html>

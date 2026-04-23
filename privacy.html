@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy — Lorecodex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { background: var(--cream); color: var(--ink-body); }
+    .doc-nav {
+      position: sticky; top: 0; z-index: 20;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 32px;
+      background: rgba(245, 236, 224, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(43,35,25,0.08);
+    }
+    .doc-nav .brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--ink-body); }
+    .doc-nav .brand img { width: 24px; height: 24px; border-radius: 5px; }
+    .doc-nav .links { display: flex; gap: 24px; font-size: 14px; color: var(--ink-body-2); }
+    .doc-nav .links a:hover { color: var(--ink-body); }
+
+    .doc {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 32px 120px;
+    }
+    .doc .eyebrow { color: var(--ink-body-3); }
+    .doc h1 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(48px, 7vw, 88px);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      margin: 16px 0 8px;
+    }
+    .doc h1 em { font-style: italic; background: linear-gradient(100deg, var(--ink-emerald), var(--ink-sapphire), var(--ink-amethyst)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .doc .updated {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--ink-body-3);
+      margin-bottom: 56px;
+    }
+    .doc h2 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 32px;
+      margin: 48px 0 14px;
+      line-height: 1.1;
+    }
+    .doc h2::before {
+      content: "";
+      display: inline-block;
+      width: 10px; height: 10px;
+      transform: rotate(45deg);
+      margin-right: 12px;
+      vertical-align: middle;
+      background: var(--g-color, var(--ink-amber));
+    }
+    .doc h2.c-amber    { --g-color: var(--ink-amber); }
+    .doc h2.c-amethyst { --g-color: var(--ink-amethyst); }
+    .doc h2.c-emerald  { --g-color: var(--ink-emerald); }
+    .doc h2.c-ruby     { --g-color: var(--ink-ruby); }
+    .doc h2.c-sapphire { --g-color: var(--ink-sapphire); }
+    .doc h2.c-steel    { --g-color: var(--ink-steel); }
+
+    .doc p, .doc li {
+      font-size: 16px; line-height: 1.65;
+      color: var(--ink-body-2);
+    }
+    .doc p { margin: 0 0 16px; }
+    .doc strong { color: var(--ink-body); font-weight: 600; }
+    .doc a { color: var(--ink-amethyst); text-decoration: underline; text-decoration-color: rgba(128,56,123,.3); text-underline-offset: 3px; }
+    .doc a:hover { text-decoration-color: currentColor; }
+    .doc ul { padding-left: 20px; }
+    .doc li { margin-bottom: 8px; }
+
+    .doc-footer {
+      margin-top: 80px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(43,35,25,0.1);
+      font-size: 13px;
+      color: var(--ink-body-3);
+    }
+    .doc-footer p { font-size: 13px; line-height: 1.6; color: var(--ink-body-3); }
+    .doc-footer a { color: var(--ink-body-2); }
+  </style>
+</head>
+<body data-screen-label="privacy">
+  <nav class="doc-nav">
+    <a class="brand" href="landing.html">
+      <img src="assets/app-icon.png" alt=""/>
+      Lorecodex
+    </a>
+    <div class="links">
+      <a href="landing.html">Home</a>
+      <a href="faq.html">FAQ</a>
+      <a href="support.html">Support</a>
+    </div>
+  </nav>
+
+  <article class="doc">
+    <div class="eyebrow"><span class="gem" style="color: var(--ink-emerald); width: 8px; height: 8px;"></span> Legal</div>
+    <h1>Privacy <em>policy</em>.</h1>
+    <div class="updated">Last updated: April 20, 2026</div>
+
+    <h2 class="c-amber">Overview</h2>
+    <p>Lorecodex is made by me, Aaron Jones, in my spare time and is designed with privacy as a core principle. The app does not automatically collect, store, or transmit any personal information. Lorecodex does not knowingly collect personal data from anyone, including children under 13. The only data sent from your device is voluntary feedback you choose to submit (see below).</p>
+
+    <h2 class="c-ruby">Speech recognition</h2>
+    <p>Voice capture uses on-device speech recognition only. <strong>No audio recordings or transcripts are sent to any server.</strong> Successful captures are converted into card entries and the underlying transcript is discarded. If a capture cannot be recognized, the unparsed transcript is kept locally on the device in the review queue so you can retry or dismiss it; it is never transmitted off the device.</p>
+
+    <h2 class="c-emerald">Card collection data, retention, and deletion</h2>
+    <p>Your card collection is stored locally on your device using Core Data. If you have iCloud enabled, collection data may sync across your devices through Apple's iCloud infrastructure. No collection data is accessible to me or any third party. Your card collection lives on your device and (if iCloud is enabled) in your private iCloud container. To delete it, use <strong>Settings → "Banish Entire Collection"</strong> inside the app, and/or delete the Lorecodex iCloud data from iOS Settings → Apple ID → iCloud → Manage Storage.</p>
+    <p>Because Lorecodex collects no personal data, the data-subject rights granted by GDPR and CCPA (access, rectification, deletion, portability) are satisfied by default — there is no data for me to access, modify, or delete.</p>
+
+    <h2 class="c-sapphire">Network requests</h2>
+    <p>The app connects to the Lorcast API (<a href="https://lorcast.com" target="_blank" rel="noopener">lorcast.com</a>) to retrieve card catalog information such as card names, images, and prices. These are read-only requests containing only set and card identifiers — no personal data is transmitted.</p>
+
+    <h2 class="c-amethyst">Analytics and tracking</h2>
+    <p>Lorecodex does not use any analytics, tracking, advertising, or crash-reporting services. <strong>There are no third-party SDKs in the app.</strong> I do not sell, rent, license, or share any user data with third parties.</p>
+
+    <h2 class="c-amber">Feedback</h2>
+    <p>If you choose to submit feedback through the app, your message along with basic device information (app version, OS version, and device type) is sent to Apple CloudKit. The feedback message is free-form text — avoid including personal information if you prefer. Feedback submission is entirely voluntary. You may also contact me at <a href="mailto:lorecodex@aaronmfj.com">lorecodex@aaronmfj.com</a>.</p>
+
+    <h2 class="c-steel">Permissions</h2>
+    <p>The app requests microphone and speech recognition permissions solely for voice-based card entry. These permissions can be revoked at any time in iOS Settings.</p>
+
+    <h2 class="c-ruby">Changes</h2>
+    <p>If this policy changes, the updated version will be posted here with a new date.</p>
+
+    <h2 class="c-sapphire">Contact</h2>
+    <p>Questions about this policy can be directed to me through the in-app feedback form or at <a href="mailto:lorecodex@aaronmfj.com">lorecodex@aaronmfj.com</a>.</p>
+
+    <div class="doc-footer">
+      <p>Lorecodex uses trademarks and/or copyrights associated with Disney Lorcana TCG, used under <a href="https://cdn.ravensburger.com/lorcana/community-code-en" target="_blank" rel="noopener">Ravensburger's Community Code Policy</a>. I am expressly prohibited from charging you to use or access this content. Lorecodex is not published, endorsed, or specifically approved by Disney or Ravensburger. For more information about Disney Lorcana TCG, visit <a href="https://www.disneylorcana.com/en-US/" target="_blank" rel="noopener">disneylorcana.com</a>. Card data provided by Lorcast.</p>
+    </div>
+  </article>
+</body>
+</html>

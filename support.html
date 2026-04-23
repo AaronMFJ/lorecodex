@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Support — Lorecodex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { background: var(--cream); color: var(--ink-body); }
+    .doc-nav {
+      position: sticky; top: 0; z-index: 20;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 32px;
+      background: rgba(245, 236, 224, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(43,35,25,0.08);
+    }
+    .doc-nav .brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--ink-body); }
+    .doc-nav .brand img { width: 24px; height: 24px; border-radius: 5px; }
+    .doc-nav .links { display: flex; gap: 24px; font-size: 14px; color: var(--ink-body-2); }
+    .doc-nav .links a:hover { color: var(--ink-body); }
+
+    .hero-sup {
+      padding: 120px 32px 60px;
+      text-align: center;
+    }
+    .hero-sup h1 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(56px, 8vw, 112px);
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin: 16px 0 24px;
+    }
+    .hero-sup h1 em {
+      font-style: italic;
+      background: linear-gradient(100deg, var(--ink-amber), var(--ink-ruby), var(--ink-amethyst));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero-sup p {
+      max-width: 52ch;
+      margin: 0 auto;
+      font-size: 18px;
+      line-height: 1.5;
+      color: var(--ink-body-2);
+    }
+
+    .support-grid {
+      max-width: 1040px;
+      margin: 40px auto 120px;
+      padding: 0 32px;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 800px) { .support-grid { grid-template-columns: 1fr; } }
+
+    .sup-card {
+      background: #fff;
+      border-radius: 22px;
+      padding: 40px;
+      border: 1px solid rgba(43,35,25,0.08);
+      box-shadow: 0 18px 40px -30px rgba(43,35,25,0.2);
+    }
+    .sup-card h2 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 32px;
+      line-height: 1.1;
+      margin: 0 0 12px;
+    }
+    .sup-card p { color: var(--ink-body-2); font-size: 15px; line-height: 1.6; margin: 0 0 16px; }
+    .sup-card .eyebrow { color: var(--ink-body-3); margin-bottom: 14px; }
+
+    .big-email {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 24px;
+      background: linear-gradient(135deg, var(--ink-amber) 0%, var(--ink-ruby) 50%, var(--ink-amethyst) 100%);
+      color: #fff;
+      border-radius: 16px;
+      font-size: 18px;
+      font-weight: 500;
+      text-decoration: none;
+      box-shadow: 0 16px 40px -12px rgba(210,9,47,0.4);
+      transition: transform .18s ease, box-shadow .2s ease;
+      word-break: break-all;
+    }
+    .big-email:hover { transform: translateY(-2px); box-shadow: 0 24px 50px -12px rgba(210,9,47,0.5); }
+    .big-email svg { flex-shrink: 0; }
+
+    .stacked { display: flex; flex-direction: column; gap: 20px; }
+
+    .sup-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+    .sup-step {
+      display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: start;
+      padding: 14px 0;
+      border-top: 1px solid rgba(43,35,25,0.08);
+    }
+    .sup-step:first-child { border-top: none; padding-top: 0; }
+    .sup-step .n {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: 26px;
+      line-height: 1;
+      color: var(--ink-amethyst);
+    }
+    .sup-step h3 { font-family: var(--font-body); font-size: 15px; font-weight: 600; margin: 0 0 4px; color: var(--ink-body); }
+    .sup-step p { font-size: 14px; margin: 0; }
+
+    .tip {
+      padding: 20px 24px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #fff7e6, #fdeac2);
+      border: 1px solid rgba(243,179,0,0.3);
+      font-size: 14px;
+      color: var(--ink-body-2);
+      line-height: 1.55;
+    }
+    .tip strong { color: var(--ink-body); }
+
+    .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-top: 1px solid rgba(43,35,25,0.08); font-size: 14px; }
+    .info-row:first-of-type { border-top: none; }
+    .info-row .k { color: var(--ink-body-3); }
+    .info-row .v { font-family: var(--font-mono); font-size: 13px; color: var(--ink-body); }
+  </style>
+</head>
+<body data-screen-label="support">
+  <nav class="doc-nav">
+    <a class="brand" href="landing.html">
+      <img src="assets/app-icon.png" alt=""/>
+      Lorecodex
+    </a>
+    <div class="links">
+      <a href="landing.html">Home</a>
+      <a href="faq.html">FAQ</a>
+      <a href="privacy.html">Privacy</a>
+    </div>
+  </nav>
+
+  <section class="hero-sup">
+    <div class="eyebrow" style="justify-content: center; color: var(--ink-body-3);"><span class="gem" style="color: var(--ink-amber); width: 8px; height: 8px;"></span> We're here</div>
+    <h1>Need a <em>hand</em>?</h1>
+    <p>Lorecodex is made by one person in his spare time. You'll hear back from a human, usually within a couple of days.</p>
+  </section>
+
+  <div class="support-grid">
+    <div class="stacked">
+      <article class="sup-card">
+        <div class="eyebrow"><span class="gem" style="color: var(--ink-ruby); width: 8px; height: 8px;"></span> Email</div>
+        <h2>The fastest way to reach me.</h2>
+        <p>Bug reports, feature requests, a card the parser can't handle, general hello — drop me a line. Include your app version and iOS version if you can; it helps me help you.</p>
+        <a class="big-email" href="mailto:lorecodex@aaronmfj.com">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          lorecodex@aaronmfj.com
+        </a>
+      </article>
+
+      <article class="sup-card">
+        <div class="eyebrow"><span class="gem" style="color: var(--ink-emerald); width: 8px; height: 8px;"></span> In-app feedback</div>
+        <h2>Send feedback from inside Lorecodex.</h2>
+        <div class="sup-list">
+          <div class="sup-step"><div class="n">1</div><div><h3>Open Settings</h3><p>Tap the gear tab at the bottom right.</p></div></div>
+          <div class="sup-step"><div class="n">2</div><div><h3>Scroll to "Feedback"</h3><p>Type anything on your mind. Your message plus the app version, iOS version, and device model are sent — nothing else.</p></div></div>
+          <div class="sup-step"><div class="n">3</div><div><h3>Hit send</h3><p>Feedback goes to me through Apple CloudKit. There's no account; if you want a reply, leave your email in the message.</p></div></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="stacked">
+      <article class="sup-card">
+        <div class="eyebrow"><span class="gem" style="color: var(--ink-sapphire); width: 8px; height: 8px;"></span> Before you write</div>
+        <h2>Quick checks.</h2>
+        <div class="tip">
+          <strong>iCloud not syncing?</strong> Open iOS Settings → your Apple ID → iCloud → Apps Using iCloud, and make sure Lorecodex is on. Sync can take a minute after a big import.
+        </div>
+        <div class="tip" style="margin-top: 12px; background: linear-gradient(180deg, #f3eaff, #e8d8f5); border-color: rgba(128,56,123,0.3);">
+          <strong>Voice capture misreads?</strong> Voice-added cards are marked with an asterisk. Open <em>Recents</em>, tap the failed row to fix the set/card.
+        </div>
+        <div class="tip" style="margin-top: 12px; background: linear-gradient(180deg, #e3f3e6, #cde8d3); border-color: rgba(40,138,52,0.3);">
+          <strong>Importing from Dreamborn?</strong> Export as <em>Dreamborn Bulk CSV</em>. Lorecodex rebuilds counts and foils from the file as-is.
+        </div>
+      </article>
+
+      <article class="sup-card">
+        <div class="eyebrow"><span class="gem" style="color: var(--ink-amethyst); width: 8px; height: 8px;"></span> System info</div>
+        <h2>Requirements.</h2>
+        <div class="info-row"><span class="k">Platform</span><span class="v">iOS 17+</span></div>
+        <div class="info-row"><span class="k">Devices</span><span class="v">iPhone · iPad</span></div>
+        <div class="info-row"><span class="k">Voice</span><span class="v">On-device speech</span></div>
+        <div class="info-row"><span class="k">Sync</span><span class="v">iCloud (optional)</span></div>
+        <div class="info-row"><span class="k">Price</span><span class="v">Free · no IAP</span></div>
+      </article>
+    </div>
+  </div>
+</body>
+</html>

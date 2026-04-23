@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FAQ — Lorecodex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    body { background: var(--cream); color: var(--ink-body); }
+    .doc-nav {
+      position: sticky; top: 0; z-index: 20;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 32px;
+      background: rgba(245, 236, 224, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(43,35,25,0.08);
+    }
+    .doc-nav .brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--ink-body); }
+    .doc-nav .brand img { width: 24px; height: 24px; border-radius: 5px; }
+    .doc-nav .links { display: flex; gap: 24px; font-size: 14px; color: var(--ink-body-2); }
+    .doc-nav .links a:hover { color: var(--ink-body); }
+
+    .hero-faq { padding: 120px 32px 60px; text-align: center; }
+    .hero-faq h1 {
+      font-family: var(--font-display); font-weight: 500;
+      font-size: clamp(56px, 8vw, 112px); line-height: .95;
+      letter-spacing: -0.02em; margin: 16px 0 24px;
+    }
+    .hero-faq h1 em {
+      font-style: italic;
+      background: linear-gradient(100deg, var(--ink-amber), var(--ink-emerald), var(--ink-sapphire));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero-faq p { max-width: 52ch; margin: 0 auto; font-size: 18px; line-height: 1.5; color: var(--ink-body-2); }
+
+    .faq-layout {
+      max-width: 1100px;
+      margin: 40px auto 120px;
+      padding: 0 32px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 48px;
+    }
+    @media (max-width: 800px) { .faq-layout { grid-template-columns: 1fr; } }
+
+    .faq-toc {
+      position: sticky;
+      top: 100px;
+      align-self: flex-start;
+      font-size: 13px;
+    }
+    .faq-toc h4 { font-family: var(--font-body); font-size: 11px; text-transform: uppercase; letter-spacing: .14em; color: var(--ink-body-3); margin-bottom: 14px; font-weight: 500; }
+    .faq-toc a { display: flex; align-items: center; gap: 8px; padding: 8px 0; color: var(--ink-body-2); border-bottom: 1px solid rgba(43,35,25,0.06); }
+    .faq-toc a:hover { color: var(--ink-body); }
+    .faq-toc a .gem { width: 6px; height: 6px; }
+
+    .faq-section { margin-bottom: 64px; scroll-margin-top: 100px; }
+    .faq-section h2 {
+      font-family: var(--font-display); font-weight: 500;
+      font-size: 36px; line-height: 1.1;
+      margin: 0 0 24px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .faq-section h2 .gem { width: 12px; height: 12px; }
+
+    details {
+      border-bottom: 1px solid rgba(43,35,25,0.12);
+      padding: 20px 0;
+    }
+    details[open] { padding-bottom: 28px; }
+    details summary {
+      font-family: var(--font-body);
+      font-size: 17px;
+      font-weight: 500;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      color: var(--ink-body);
+    }
+    details summary::-webkit-details-marker { display: none; }
+    details summary::after {
+      content: "+";
+      font-family: var(--font-display);
+      font-size: 28px;
+      line-height: 1;
+      color: var(--ink-body-3);
+      transition: transform .2s ease, color .2s ease;
+    }
+    details[open] summary::after { content: "−"; color: var(--ink-body); }
+    details .answer {
+      margin-top: 14px;
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--ink-body-2);
+      max-width: 62ch;
+    }
+    details .answer p { margin: 0 0 12px; }
+    details .answer p:last-child { margin-bottom: 0; }
+    details .answer a { color: var(--ink-amethyst); text-decoration: underline; text-decoration-color: rgba(128,56,123,.3); text-underline-offset: 3px; }
+    details .answer code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      background: rgba(43,35,25,0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body data-screen-label="faq">
+  <nav class="doc-nav">
+    <a class="brand" href="landing.html">
+      <img src="assets/app-icon.png" alt=""/>
+      Lorecodex
+    </a>
+    <div class="links">
+      <a href="landing.html">Home</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="support.html">Support</a>
+    </div>
+  </nav>
+
+  <section class="hero-faq">
+    <div class="eyebrow" style="justify-content: center; color: var(--ink-body-3);"><span class="gem" style="color: var(--ink-amber); width: 8px; height: 8px;"></span> Answers</div>
+    <h1 data-tw-heading>Frequently <em>asked</em>.</h1>
+    <p data-tw-intro>The stuff people write in about, answered before you have to. Can't find what you need? <a href="support.html" style="color: var(--ink-amethyst); text-decoration: underline;">Email me</a>.</p>
+  </section>
+
+  <div class="faq-layout">
+    <aside class="faq-toc">
+      <h4>Topics</h4>
+      <a href="#basics"><span class="gem" style="color: var(--ink-amber);"></span>Basics</a>
+      <a href="#capture"><span class="gem" style="color: var(--ink-ruby);"></span>Capture &amp; voice</a>
+      <a href="#sessions"><span class="gem" style="color: var(--ink-emerald);"></span>Sessions</a>
+      <a href="#imports"><span class="gem" style="color: var(--ink-sapphire);"></span>Import &amp; export</a>
+      <a href="#privacy-sync"><span class="gem" style="color: var(--ink-amethyst);"></span>Privacy &amp; sync</a>
+      <a href="#app"><span class="gem" style="color: var(--ink-steel);"></span>The app itself</a>
+    </aside>
+
+    <main>
+      <section class="faq-section" id="basics" data-tw-sec="basics">
+        <h2 data-tw-sec-title="basics"><span class="gem" style="color: var(--ink-amber);"></span>Basics</h2>
+        <details open data-tw-q="basics-0">
+          <summary data-tw-sum="basics-0">What is Lorecodex?</summary>
+          <div class="answer">
+            <p data-tw-ans="basics-0">A fast, private iOS app for tracking your Disney Lorcana TCG collection. It's designed as a companion to inventory sites like Dreamborn and Lorcana.gg — add cards quickly here, export cleanly to there.</p>
+          </div>
+        </details>
+        <details data-tw-q="basics-1">
+          <summary data-tw-sum="basics-1">Does it cost anything?</summary>
+          <div class="answer">
+            <p data-tw-ans="basics-1">No. Lorecodex is free. No in-app purchases, no subscriptions, no ads. Disney Lorcana's community code policy forbids charging for this kind of app, and that suits me fine.</p>
+          </div>
+        </details>
+        <details data-tw-q="basics-2">
+          <summary data-tw-sum="basics-2">Do I need an account?</summary>
+          <div class="answer">
+            <p data-tw-ans="basics-2">No account, no sign-in. If you enable iCloud sync, that happens through your existing Apple ID — Lorecodex never sees it.</p>
+          </div>
+        </details>
+        <details data-tw-q="basics-3">
+          <summary data-tw-sum="basics-3">What devices does it run on?</summary>
+          <div class="answer">
+            <p data-tw-ans="basics-3">iPhone and iPad running iOS 17 or later. A Mac (Apple silicon) can run it via iPad compatibility, though it's designed for touch.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="faq-section" id="capture" data-tw-sec="capture">
+        <h2 data-tw-sec-title="capture"><span class="gem" style="color: var(--ink-ruby);"></span>Capture &amp; voice</h2>
+        <details data-tw-q="capture-0">
+          <summary data-tw-sum="capture-0">How does the number pad work?</summary>
+          <div class="answer">
+            <p data-tw-ans="capture-0">There are two selectors. The horizontal row at the top is the <strong>set</strong>; the grid is the <strong>card number</strong>. Pick a set once, then type card numbers and hit Add. Set stays selected until you change it — perfect for ripping a pack from one set.</p>
+          </div>
+        </details>
+        <details data-tw-q="capture-1">
+          <summary data-tw-sum="capture-1">Can I mark a card as foil?</summary>
+          <div class="answer">
+            <p data-tw-ans="capture-1">Yes — there's a Normal/Foil toggle above the pad. Voice capture also understands "foil" at the end of a phrase.</p>
+          </div>
+        </details>
+        <details data-tw-q="capture-2">
+          <summary data-tw-sum="capture-2">How does voice capture work?</summary>
+          <div class="answer">
+            <p data-tw-ans="capture-2">Tap the mic and say something like <code>"set 4, card 188, foil"</code>. Lorcana's six ink colors, set numbers, card numbers, and the word "foil" all parse into an entry. Speech recognition runs 100% on-device via Apple's Speech framework — nothing leaves your phone.</p>
+          </div>
+        </details>
+        <details data-tw-q="capture-3">
+          <summary data-tw-sum="capture-3">Why is voice capture marked as beta?</summary>
+          <div class="answer">
+            <p data-tw-ans="capture-3">It's a fun way to add cards, but on-device models sometimes mishear. Every voice-added card gets an asterisk in your collection so you can spot-check later. If a phrase doesn't parse, it's held in Recents so you can tap to fix or dismiss it.</p>
+          </div>
+        </details>
+        <details data-tw-q="capture-4">
+          <summary data-tw-sum="capture-4">What's the Recents list for?</summary>
+          <div class="answer">
+            <p data-tw-ans="capture-4">It shows the last captures, successful or failed, in order. Tap a failed entry to correct it. Useful for double-checking a pack rip without scrolling your whole collection.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="faq-section" id="sessions" data-tw-sec="sessions">
+        <h2 data-tw-sec-title="sessions"><span class="gem" style="color: var(--ink-emerald);"></span>Sessions</h2>
+        <details data-tw-q="sessions-0">
+          <summary data-tw-sum="sessions-0">What's Session mode for?</summary>
+          <div class="answer">
+            <p data-tw-ans="sessions-0">When you open new packs, you only want to share the new cards - not a re-export of your entire collection. Start a session, add cards as normal (they also go into your permanent collection), then end the session and export just that bundle.</p>
+          </div>
+        </details>
+        <details data-tw-q="sessions-1">
+          <summary data-tw-sum="sessions-1">Can I have more than one session?</summary>
+          <div class="answer">
+            <p data-tw-ans="sessions-1">Sessions are one-at-a-time. End one and start another when you open new packs. Past session exports are kept as CSVs you can re-share from the Files app.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="faq-section" id="imports" data-tw-sec="imports">
+        <h2 data-tw-sec-title="imports"><span class="gem" style="color: var(--ink-sapphire);"></span>Import &amp; export</h2>
+        <details data-tw-q="imports-0">
+          <summary data-tw-sum="imports-0">How do I import from Dreamborn?</summary>
+          <div class="answer">
+            <p data-tw-ans="imports-0">Export your collection from Dreamborn as <strong>Bulk CSV</strong>, then in Lorecodex go to <em>Settings → Import Collection</em> and pick the file. Counts and foils are rebuilt from the file exactly.</p>
+          </div>
+        </details>
+        <details data-tw-q="imports-1">
+          <summary data-tw-sum="imports-1">What export formats are supported?</summary>
+          <div class="answer">
+            <p data-tw-ans="imports-1">Dreamborn Bulk CSV and Lorcana.gg formats. Scope can be <em>full collection</em> or <em>current session only</em>. Exports use iOS's share sheet — save to Files, email it, upload to iCloud Drive, whatever you like.</p>
+          </div>
+        </details>
+        <details data-tw-q="imports-2">
+          <summary data-tw-sum="imports-2">Where does card data come from?</summary>
+          <div class="answer">
+            <p data-tw-ans="imports-2">The <a href="https://lorcast.com" target="_blank" rel="noopener">Lorcast API</a>. Lorecodex makes read-only requests using set and card identifiers only — no account info, no personal data.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="faq-section" id="privacy-sync" data-tw-sec="privacy-sync">
+        <h2 data-tw-sec-title="privacy-sync"><span class="gem" style="color: var(--ink-amethyst);"></span>Privacy &amp; sync</h2>
+        <details data-tw-q="privacy-sync-0">
+          <summary data-tw-sum="privacy-sync-0">What data leaves my device?</summary>
+          <div class="answer">
+            <p data-tw-ans="privacy-sync-0">Only two things, both voluntary: (1) set/card ID lookups to Lorcast for card data; (2) feedback messages, if you send them through the in-app form. No analytics, no crash reporters, no third-party SDKs, no audio.</p>
+          </div>
+        </details>
+        <details data-tw-q="privacy-sync-1">
+          <summary data-tw-sum="privacy-sync-1">How does iCloud sync work?</summary>
+          <div class="answer">
+            <p data-tw-ans="privacy-sync-1">If enabled, your collection syncs across your devices through Apple's CloudKit in your private iCloud container. I can't see it. To turn it off, use iOS Settings → Apple ID → iCloud → Lorecodex.</p>
+          </div>
+        </details>
+        <details data-tw-q="privacy-sync-2">
+          <summary data-tw-sum="privacy-sync-2">How do I delete my collection?</summary>
+          <div class="answer">
+            <p data-tw-ans="privacy-sync-2">In Lorecodex, open <em>Settings → "Banish Entire Collection"</em>. If you also use iCloud, remove the Lorecodex iCloud data from iOS Settings → Apple ID → iCloud → Manage Storage.</p>
+          </div>
+        </details>
+        <details data-tw-q="privacy-sync-3">
+          <summary data-tw-sum="privacy-sync-3">Is there a privacy policy?</summary>
+          <div class="answer">
+            <p data-tw-ans="privacy-sync-3">Yes — <a href="privacy.html">right here</a>.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="faq-section" id="app" data-tw-sec="app">
+        <h2 data-tw-sec-title="app"><span class="gem" style="color: var(--ink-steel);"></span>The app itself</h2>
+        <details data-tw-q="app-0">
+          <summary data-tw-sum="app-0">Who makes Lorecodex?</summary>
+          <div class="answer">
+            <p data-tw-ans="app-0">Aaron Jones, as a hobby project. It's not a company, not a service, not a startup. Just a tool I wanted for my own collection and figured others might want too.</p>
+          </div>
+        </details>
+        <details data-tw-q="app-1">
+          <summary data-tw-sum="app-1">Is this official?</summary>
+          <div class="answer">
+            <p data-tw-ans="app-1">No. Lorecodex is a fan app made under <a href="https://cdn.ravensburger.com/lorcana/community-code-en" target="_blank" rel="noopener">Ravensburger's Community Code Policy</a>. It's not published, endorsed, or approved by Disney or Ravensburger. For official Lorcana info, visit <a href="https://www.disneylorcana.com/en-US/" target="_blank" rel="noopener">disneylorcana.com</a>.</p>
+          </div>
+        </details>
+        <details data-tw-q="app-2">
+          <summary data-tw-sum="app-2">Is there an Android version?</summary>
+          <div class="answer">
+            <p data-tw-ans="app-2">No, and there probably won't be. Sorry!</p>
+          </div>
+        </details>
+        <details data-tw-q="app-3">
+          <summary data-tw-sum="app-3">I found a bug / want a feature.</summary>
+          <div class="answer">
+            <p data-tw-ans="app-3">Email <a href="mailto:lorecodex@aaronmfj.com">lorecodex@aaronmfj.com</a> or use the in-app feedback form. I read every one.</p>
+          </div>
+        </details>
+      </section>
+    </main>
+  </div>
+  <!-- ───── TWEAKS ───── -->
+  <script>
+  (function(){
+    // Collect all editable nodes + section/question ids
+    const h1 = document.querySelector('[data-tw-heading]');
+    const intro = document.querySelector('[data-tw-intro]');
+    const secTitles = Array.from(document.querySelectorAll('[data-tw-sec-title]'));
+    const summaries = Array.from(document.querySelectorAll('[data-tw-sum]'));
+    const answers = Array.from(document.querySelectorAll('[data-tw-ans]'));
+    const sections = Array.from(document.querySelectorAll('[data-tw-sec]'));
+    const questions = Array.from(document.querySelectorAll('[data-tw-q]'));
+
+    const sectionOrder = sections.map(s => s.getAttribute('data-tw-sec'));
+    const SECTION_LABELS = {
+      'basics':       'Basics',
+      'capture':      'Capture & voice',
+      'sessions':     'Sessions',
+      'imports':      'Import & export',
+      'privacy-sync': 'Privacy & sync',
+      'app':          'The app itself'
+    };
+
+    // Build defaults map: heading, intro, per-section title, per-question summary & answer, visibility toggles
+    const defaults = {};
+    defaults.heading = h1 ? h1.innerHTML : '';
+    defaults.intro = intro ? intro.innerHTML : '';
+    secTitles.forEach(el => {
+      const sid = el.getAttribute('data-tw-sec-title');
+      defaults['sec_title__' + sid] = el.innerHTML;
+      defaults['show_sec__' + sid] = true;
+    });
+    summaries.forEach(el => { defaults['sum__' + el.getAttribute('data-tw-sum')] = el.innerHTML; });
+    answers.forEach(el => { defaults['ans__' + el.getAttribute('data-tw-ans')] = el.innerHTML; });
+    questions.forEach(el => { defaults['show_q__' + el.getAttribute('data-tw-q')] = true; });
+
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{}/*EDITMODE-END*/;
+    const state = Object.assign({}, defaults, TWEAK_DEFAULTS);
+
+    function applyAll() {
+      if (h1) h1.innerHTML = state.heading;
+      if (intro) intro.innerHTML = state.intro;
+      secTitles.forEach(el => {
+        const sid = el.getAttribute('data-tw-sec-title');
+        el.innerHTML = state['sec_title__' + sid];
+      });
+      summaries.forEach(el => {
+        const qid = el.getAttribute('data-tw-sum');
+        el.innerHTML = state['sum__' + qid];
+      });
+      answers.forEach(el => {
+        const qid = el.getAttribute('data-tw-ans');
+        el.innerHTML = state['ans__' + qid];
+      });
+      sections.forEach(el => {
+        const sid = el.getAttribute('data-tw-sec');
+        el.style.display = state['show_sec__' + sid] ? '' : 'none';
+      });
+      questions.forEach(el => {
+        const qid = el.getAttribute('data-tw-q');
+        el.style.display = state['show_q__' + qid] ? '' : 'none';
+      });
+    }
+
+    function persist(edits){
+      try { window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*'); } catch(e){}
+    }
+
+    // ─── In-place editing ───────────────────────────────
+    let editing = false;
+    const allEditables = [h1, intro, ...secTitles, ...summaries, ...answers].filter(Boolean);
+
+    function onBlur(e){
+      const el = e.currentTarget;
+      let key;
+      if (el === h1) key = 'heading';
+      else if (el === intro) key = 'intro';
+      else if (el.hasAttribute('data-tw-sec-title')) key = 'sec_title__' + el.getAttribute('data-tw-sec-title');
+      else if (el.hasAttribute('data-tw-sum')) key = 'sum__' + el.getAttribute('data-tw-sum');
+      else if (el.hasAttribute('data-tw-ans')) key = 'ans__' + el.getAttribute('data-tw-ans');
+      if (!key) return;
+      const v = el.innerHTML.trim();
+      if (state[key] !== v){
+        state[key] = v;
+        persist({ [key]: v });
+      }
+    }
+    function onKey(e){
+      // Enter in a summary or section title commits and blurs (no line break);
+      // Shift+Enter inserts line break. Answers and intro allow Enter normally.
+      const el = e.currentTarget;
+      const single = (el === h1) || el.hasAttribute('data-tw-sec-title') || el.hasAttribute('data-tw-sum');
+      if (e.key === 'Enter' && single && !e.shiftKey){
+        e.preventDefault();
+        el.blur();
+      }
+      if (e.key === 'Escape'){ el.blur(); }
+    }
+    function onSummaryClick(e){
+      // In edit mode, clicking a summary should edit, not toggle the details.
+      if (editing) e.preventDefault();
+    }
+
+    allEditables.forEach(el => {
+      el.addEventListener('blur', onBlur);
+      el.addEventListener('keydown', onKey);
+    });
+    summaries.forEach(s => s.addEventListener('click', onSummaryClick));
+
+    function setEditing(on){
+      editing = on;
+      document.body.classList.toggle('tw-editing', on);
+      allEditables.forEach(el => {
+        if (on) el.setAttribute('contenteditable', 'true');
+        else el.removeAttribute('contenteditable');
+      });
+      // When editing, force-open all details so the answers are visible
+      if (on) questions.forEach(d => d.setAttribute('open',''));
+    }
+
+    // ─── Panel UI ──────────────────────────────────────
+    const panel = document.createElement('div');
+    panel.id = 'tw-panel';
+    panel.innerHTML = `
+      <div class="tw-head">
+        <div class="tw-title">Tweaks</div>
+        <button class="tw-close" aria-label="close">×</button>
+      </div>
+      <div class="tw-hint">
+        Click any heading, question, or answer on the page to edit it in place.
+        <br/><strong>Enter</strong> commits. <strong>Esc</strong> or click away to finish.
+      </div>
+      <div class="tw-body"></div>
+      <div class="tw-foot">
+        <button class="tw-reset" type="button">Reset all</button>
+      </div>
+    `;
+    const css = document.createElement('style');
+    css.textContent = `
+      #tw-panel {
+        position: fixed; right: 20px; bottom: 20px; z-index: 9999;
+        width: 320px; max-height: 82vh; display: none;
+        background: #0f0b09; color: #f5ecd9;
+        border: 1px solid rgba(243,231,211,0.18); border-radius: 16px;
+        font-family: "Geist", system-ui, sans-serif;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        flex-direction: column; overflow: hidden;
+      }
+      #tw-panel.open { display: flex; }
+      #tw-panel .tw-head { display:flex; justify-content:space-between; align-items:center; padding: 14px 18px; border-bottom: 1px solid rgba(243,231,211,0.1); }
+      #tw-panel .tw-title { font-family: "Cormorant Garamond", serif; font-size: 22px; font-weight: 500; letter-spacing: -0.01em; }
+      #tw-panel .tw-close { background: none; border: none; color: inherit; font-size: 22px; cursor: pointer; line-height: 1; width: 26px; height: 26px; border-radius: 6px; }
+      #tw-panel .tw-close:hover { background: rgba(255,255,255,0.08); }
+      #tw-panel .tw-hint { padding: 10px 18px; font-size: 11px; line-height: 1.5; color: rgba(245,236,217,0.55); border-bottom: 1px solid rgba(243,231,211,0.08); background: rgba(243,179,0,0.04); }
+      #tw-panel .tw-hint strong { color: var(--ink-amber, #F3B300); font-weight: 500; }
+      #tw-panel .tw-body { padding: 10px 16px 14px; overflow-y: auto; flex: 1; }
+      #tw-panel .tw-body::-webkit-scrollbar { width: 6px; }
+      #tw-panel .tw-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
+      #tw-panel .tw-group { margin-top: 14px; }
+      #tw-panel .tw-group:first-child { margin-top: 6px; }
+      #tw-panel .tw-group-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; color: rgba(245,236,217,0.5); margin-bottom: 6px; font-weight: 500; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+      #tw-panel .tw-row { display:flex; align-items:center; justify-content:space-between; gap: 10px; padding: 6px 0; }
+      #tw-panel .tw-row label { margin: 0; flex: 1; font-size: 12px; color: rgba(245,236,217,0.85); }
+      #tw-panel .tw-row.tw-q-row label { font-size: 11px; color: rgba(245,236,217,0.65); padding-left: 10px; }
+      #tw-panel input[type=checkbox] { accent-color: #F3B300; width: 14px; height: 14px; cursor: pointer; flex: 0 0 auto; }
+      #tw-panel .tw-foot { padding: 12px 18px; border-top: 1px solid rgba(243,231,211,0.1); display: flex; justify-content: flex-end; }
+      #tw-panel .tw-reset { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: #f5ecd9; padding: 6px 12px; border-radius: 8px; font-family: inherit; font-size: 12px; cursor: pointer; }
+      #tw-panel .tw-reset:hover { background: rgba(255,255,255,0.06); }
+
+      /* In-place edit visuals */
+      body.tw-editing [contenteditable="true"] {
+        outline: 1px dashed rgba(243,179,0,0.4);
+        outline-offset: 2px;
+        border-radius: 3px;
+        cursor: text;
+        min-height: 1em;
+      }
+      body.tw-editing [contenteditable="true"]:hover {
+        outline-color: rgba(243,179,0,0.7);
+        background: rgba(243,179,0,0.05);
+      }
+      body.tw-editing [contenteditable="true"]:focus {
+        outline: 2px solid var(--ink-amber, #F3B300);
+        outline-offset: 2px;
+        background: rgba(243,179,0,0.08);
+      }
+      body.tw-editing summary { cursor: text; }
+    `;
+    document.head.appendChild(css);
+    document.body.appendChild(panel);
+
+    const bodyEl = panel.querySelector('.tw-body');
+
+    // Build section/question toggle list
+    let html = '';
+    for (const sid of sectionOrder){
+      const label = SECTION_LABELS[sid] || sid;
+      html += `<div class="tw-group"><div class="tw-group-title">${label}</div>`;
+      html += `<div class="tw-row"><label>Show section</label><input type="checkbox" data-tw-toggle="show_sec__${sid}" ${state['show_sec__' + sid] ? 'checked':''}></div>`;
+      // List each question under this section
+      const qEls = questions.filter(q => q.getAttribute('data-tw-q').startsWith(sid + '-'));
+      qEls.forEach(q => {
+        const qid = q.getAttribute('data-tw-q');
+        const sumEl = q.querySelector('[data-tw-sum]');
+        const summaryText = (state['sum__' + qid] || sumEl.textContent).replace(/<[^>]+>/g,'').slice(0, 60);
+        html += `<div class="tw-row tw-q-row"><label title="${summaryText.replace(/"/g,'&quot;')}">${summaryText}${summaryText.length>=60?'…':''}</label><input type="checkbox" data-tw-toggle="show_q__${qid}" ${state['show_q__' + qid] ? 'checked':''}></div>`;
+      });
+      html += `</div>`;
+    }
+    bodyEl.innerHTML = html;
+
+    bodyEl.addEventListener('change', (e) => {
+      const t = e.target;
+      const k = t.getAttribute('data-tw-toggle');
+      if (!k) return;
+      state[k] = t.checked;
+      applyAll();
+      persist({ [k]: t.checked });
+    });
+
+    panel.querySelector('.tw-close').addEventListener('click', deactivate);
+    panel.querySelector('.tw-reset').addEventListener('click', () => {
+      // Reset to defaults (the originals captured from HTML before overrides)
+      Object.keys(state).forEach(k => delete state[k]);
+      Object.assign(state, defaults);
+      applyAll();
+      // Rebuild panel checkboxes
+      bodyEl.querySelectorAll('[data-tw-toggle]').forEach(el => {
+        const k = el.getAttribute('data-tw-toggle');
+        el.checked = !!state[k];
+      });
+      persist(defaults);
+    });
+
+    function activate(){ panel.classList.add('open'); setEditing(true); }
+    function deactivate(){ panel.classList.remove('open'); setEditing(false); }
+
+    window.addEventListener('message', (e) => {
+      const d = e.data; if (!d || !d.type) return;
+      if (d.type === '__activate_edit_mode') activate();
+      if (d.type === '__deactivate_edit_mode') deactivate();
+    });
+    try { window.parent.postMessage({ type: '__edit_mode_available' }, '*'); } catch(e){}
+
+    applyAll();
+  })();
+  </script>
+
+</body>
+</html>
