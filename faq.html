@@ -129,7 +129,7 @@
   <section class="hero-faq">
     <div class="eyebrow" style="justify-content: center; color: var(--ink-body-3);"><span class="gem" style="color: var(--ink-amber); width: 8px; height: 8px;"></span> Answers</div>
     <h1 data-tw-heading>Frequently <em>asked</em>.</h1>
-    <p data-tw-intro>The stuff people write in about, answered before you have to. Can't find what you need? <a href="support.html" style="color: var(--ink-amethyst); text-decoration: underline;">Email me</a>.</p>
+    <p data-tw-intro>Things no one asked about, but you're here now. <a href="support.html" style="color: var(--ink-amethyst); text-decoration: underline;">Email me</a>.</p>
   </section>
 
   <div class="faq-layout">
@@ -149,27 +149,27 @@
         <details open data-tw-q="basics-0">
           <summary data-tw-sum="basics-0">What is Lorecodex?</summary>
           <div class="answer">
-            <p data-tw-ans="basics-0">A fast, private iOS app for tracking your Disney Lorcana TCG collection. It's designed as a companion to inventory sites like Dreamborn and Lorcana.gg — add cards quickly here, export cleanly to there.</p>
+            <p data-tw-ans="basics-0">A fast, free, private iOS app for tracking your Disney Lorcana TCG collection. It's designed as a companion to inventory sites like Dreamborn and Lorcana.gg — add cards quickly here, export cleanly to there.</p>
           </div>
         </details>
-        <details data-tw-q="basics-1">
+        <!-- <details data-tw-q="basics-1">
           <summary data-tw-sum="basics-1">Does it cost anything?</summary>
           <div class="answer">
             <p data-tw-ans="basics-1">No. Lorecodex is free. No in-app purchases, no subscriptions, no ads. Disney Lorcana's community code policy forbids charging for this kind of app, and that suits me fine.</p>
           </div>
-        </details>
+        </details> -->
         <details data-tw-q="basics-2">
           <summary data-tw-sum="basics-2">Do I need an account?</summary>
           <div class="answer">
             <p data-tw-ans="basics-2">No account, no sign-in. If you enable iCloud sync, that happens through your existing Apple ID — Lorecodex never sees it.</p>
           </div>
         </details>
-        <details data-tw-q="basics-3">
+        <!-- <details data-tw-q="basics-3">
           <summary data-tw-sum="basics-3">What devices does it run on?</summary>
           <div class="answer">
             <p data-tw-ans="basics-3">iPhone and iPad running iOS 17 or later. A Mac (Apple silicon) can run it via iPad compatibility, though it's designed for touch.</p>
           </div>
-        </details>
+        </details> -->
       </section>
 
       <section class="faq-section" id="capture" data-tw-sec="capture">
@@ -189,21 +189,21 @@
         <details data-tw-q="capture-2">
           <summary data-tw-sum="capture-2">How does voice capture work?</summary>
           <div class="answer">
-            <p data-tw-ans="capture-2">Tap the mic and say something like <code>"set 4, card 188, foil"</code>. Lorcana's six ink colors, set numbers, card numbers, and the word "foil" all parse into an entry. Speech recognition runs 100% on-device via Apple's Speech framework — nothing leaves your phone.</p>
+            <p data-tw-ans="capture-2">Tap the mic and say something like <code>"set 4, card 188, foil"</code>. Set numbers, card numbers, and the word "foil" all parse into an entry. Speech recognition runs 100% on-device via Apple's Speech framework — nothing leaves your phone. It's still a work in progress.</p>
           </div>
         </details>
         <details data-tw-q="capture-3">
           <summary data-tw-sum="capture-3">Why is voice capture marked as beta?</summary>
           <div class="answer">
-            <p data-tw-ans="capture-3">It's a fun way to add cards, but on-device models sometimes mishear. Every voice-added card gets an asterisk in your collection so you can spot-check later. If a phrase doesn't parse, it's held in Recents so you can tap to fix or dismiss it.</p>
+            <p data-tw-ans="capture-3">It's a fun way to add cards, but on-device models sometimes mishear and my parsing code relies on speaking slowly and clearly. Every voice-added card gets an asterisk in your collection so you can spot-check later. If a phrase doesn't parse, it's held in Recents so you can tap to fix or dismiss it.</p>
           </div>
         </details>
-        <details data-tw-q="capture-4">
+        <!-- <details data-tw-q="capture-4">
           <summary data-tw-sum="capture-4">What's the Recents list for?</summary>
           <div class="answer">
             <p data-tw-ans="capture-4">It shows the last captures, successful or failed, in order. Tap a failed entry to correct it. Useful for double-checking a pack rip without scrolling your whole collection.</p>
           </div>
-        </details>
+        </details> -->
       </section>
 
       <section class="faq-section" id="sessions" data-tw-sec="sessions">
@@ -214,12 +214,12 @@
             <p data-tw-ans="sessions-0">When you open new packs, you only want to share the new cards - not a re-export of your entire collection. Start a session, add cards as normal (they also go into your permanent collection), then end the session and export just that bundle.</p>
           </div>
         </details>
-        <details data-tw-q="sessions-1">
+        <!-- <details data-tw-q="sessions-1">
           <summary data-tw-sum="sessions-1">Can I have more than one session?</summary>
           <div class="answer">
             <p data-tw-ans="sessions-1">Sessions are one-at-a-time. End one and start another when you open new packs. Past session exports are kept as CSVs you can re-share from the Files app.</p>
           </div>
-        </details>
+        </details> -->
       </section>
 
       <section class="faq-section" id="imports" data-tw-sec="imports">
@@ -289,11 +289,11 @@
         <details data-tw-q="app-2">
           <summary data-tw-sum="app-2">Is there an Android version?</summary>
           <div class="answer">
-            <p data-tw-ans="app-2">No, and there probably won't be. Sorry!</p>
+            <p data-tw-ans="app-2">No. It's a lot of work, maybe one day.</p>
           </div>
         </details>
         <details data-tw-q="app-3">
-          <summary data-tw-sum="app-3">I found a bug / want a feature.</summary>
+          <summary data-tw-sum="app-3">Found a bug / want a feature?</summary>
           <div class="answer">
             <p data-tw-ans="app-3">Email <a href="mailto:lorecodex@aaronmfj.com">lorecodex@aaronmfj.com</a> or use the in-app feedback form. I read every one.</p>
           </div>
