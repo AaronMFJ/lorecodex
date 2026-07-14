@@ -1,0 +1,190 @@
+/* Lorecodex site — direction B "Pale Sky" tokens + base (light/dark) */
+
+/* ── Self-hosted fonts (no third-party requests) ── */
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("assets/fonts/bricolage-grotesque.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Karla";
+  src: url("assets/fonts/karla.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Karla";
+  src: url("assets/fonts/karla-italic.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Space Mono";
+  src: url("assets/fonts/space-mono-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Space Mono";
+  src: url("assets/fonts/space-mono-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg:         #E7F1FA;
+  --card:       #FFFFFF;
+  --card-2:     #EDF4FA;
+  --ink:        #22303C;
+  --ink-2:      #55677A;
+  --ink-3:      #8CA0B3;
+  --coral:      #E2654A;
+  --coral-deep: #C24B32;
+  --coral-soft: #FDEBE5;
+  --blue:       #2E86AB;
+  --blue-deep:  #22688A;
+  --blue-soft:  #E4F1F7;
+  --green-deep: #3D7038;
+  --green-soft: #EAF3E7;
+  --frame:      #22303C;
+  --line:       rgba(34, 48, 60, 0.12);
+  --shadow-lg:  0 30px 70px -40px rgba(34, 48, 60, 0.35);
+  --shadow-md:  0 18px 44px -30px rgba(34, 48, 60, 0.35);
+
+  --font-display: "Bricolage Grotesque", "Avenir Next", sans-serif;
+  --font-body:    "Karla", "Helvetica Neue", sans-serif;
+  --font-mono:    "Space Mono", ui-monospace, monospace;
+}
+
+html[data-theme="dark"] {
+  --bg:         #131E28;
+  --card:       #1C2A37;
+  --card-2:     #253645;
+  --ink:        #EAF1F7;
+  --ink-2:      #A7B8C7;
+  --ink-3:      #718598;
+  --coral:      #E9714F;
+  --coral-deep: #F0906F;
+  --coral-soft: rgba(233, 113, 79, 0.16);
+  --blue:       #5FA8CC;
+  --blue-deep:  #8AC3DF;
+  --blue-soft:  rgba(95, 168, 204, 0.16);
+  --green-deep: #8FC789;
+  --green-soft: rgba(143, 199, 137, 0.14);
+  --frame:      #0B1219;
+  --line:       rgba(234, 241, 247, 0.12);
+  --shadow-lg:  0 30px 70px -40px rgba(0, 0, 0, 0.65);
+  --shadow-md:  0 18px 44px -30px rgba(0, 0, 0, 0.6);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+p { text-wrap: pretty; }
+
+a { color: var(--coral); text-decoration: none; }
+a:hover { color: var(--coral-deep); }
+
+/* ── Top bar ── */
+.topbar {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 26px 32px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.topbar .brand {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-display);
+  font-size: 21px; font-weight: 700; color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.topbar .brand img { width: 30px; height: 30px; border-radius: 8px; }
+.topbar .side { display: flex; align-items: center; gap: 18px; }
+.topbar .side .navlink { font-size: 14.5px; font-weight: 700; color: var(--ink-2); }
+.topbar .side .navlink:hover { color: var(--ink); }
+
+.theme-toggle {
+  width: 40px; height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink-2);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.3s ease;
+}
+.theme-toggle:hover { color: var(--ink); }
+.theme-toggle .moon { display: none; }
+html[data-theme="dark"] .theme-toggle .sun { display: none; }
+html[data-theme="dark"] .theme-toggle .moon { display: block; }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 15px 26px; border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 16px; font-weight: 700;
+  border: none; cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.btn-coral {
+  background: var(--coral); color: #fff;
+  box-shadow: 0 12px 28px -10px rgba(226, 101, 74, 0.55);
+}
+.btn-coral:hover { transform: translateY(-1px); color: #fff; }
+.btn-quiet { background: var(--card-2); color: var(--ink); }
+.btn-quiet:hover { color: var(--ink); filter: brightness(0.97); }
+html[data-theme="dark"] .btn-quiet:hover { filter: brightness(1.1); }
+
+/* ── Footer ── */
+.foot {
+  text-align: center;
+  padding: 20px 32px 48px;
+  color: var(--ink-2);
+  max-width: 1160px;
+  margin: 0 auto;
+}
+.foot .made {
+  font-family: var(--font-display);
+  font-size: 20px; font-weight: 600; color: var(--ink);
+  margin: 0 0 18px;
+}
+.foot .links {
+  display: flex; gap: 26px; justify-content: center; flex-wrap: wrap;
+  font-size: 14px; font-weight: 700; margin-bottom: 24px;
+}
+.foot .links a { color: var(--ink); border-bottom: 2px solid var(--line); padding-bottom: 1px; }
+.foot .links a:hover { border-bottom-color: var(--coral); }
+.foot small {
+  display: block; font-size: 11.5px; line-height: 1.65;
+  color: var(--ink-3); max-width: 86ch; margin: 0 auto;
+}
+.foot small a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 2px; }
