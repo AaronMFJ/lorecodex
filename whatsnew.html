@@ -160,35 +160,26 @@
     ============================================================================ -->
 
     <!-- ── Coming soon ──  (each <section class="coming"> is one upcoming release; add/remove cards freely, or delete the whole .coming-stack if nothing is in the works) -->
-    <div class="coming-stack">
-
-      <section class="coming" data-screen-label="coming-soon">
-        <span class="tag">In development - v1.3</span>
-        <h2>Session manager</h2>
-        <p class="lede">More control over the sessions you've already logged, right from Settings. The new session manager lets you view previous or active sessions, delete cards from a session (removes from collection), rename and resume a previous session. Exporting your sessions to Dreamborn is even better.</p>
-        <ul class="changes">
-          <li><span class="chip new">New</span><span>Session Manager. View your past sessions from Settings.</span></li>
-        </ul>
-      </section>
-      <!-- <section class="coming" data-screen-label="coming-soon">
-        <span class="tag">Up next · v1.3</span>
-        <h2>Attack of the Vine!, and a big reliability pass</h2>
-        <p class="lede">The newest set, plus a serious accuracy pass on voice capture.</p>
-        <ul class="changes">
-          <li><span class="chip new">New</span><span>Set 13 "Attack of the Vine!" added to the catalog.</span></li>
-          <li><span class="chip imp">Improved</span><span>Major voice-capture reliability pass: fewer misheard or phantom cards, and steadier handling when you're interrupted mid-sentence.</span></li>
-          <li><span class="chip fix">Fixed</span><span>Dreamborn import and export for promo cards, which were intentionally skipped previously.</span></li>
-          <li><span class="chip fix">Fixed</span><span>Exported collections could contain duplicate rows, inflating card counts when re-imported elsewhere.</span></li>
-          <li><span class="chip fix">Fixed</span><span>iPad layout issues.</span></li>
-        </ul> -->
-      </section>
-
-
-    </div>
 
     <!-- ── Shipped releases ──  (newest first; paste new <article class="rel"> blocks at the TOP) -->
     <p class="shipped-label">Shipped</p>
     <div class="timeline">
+      <article class="rel" data-screen-label="release">
+        <div class="rel-dot"></div>
+        <div class="rel-head"><span class="ver">v1.3</span></div>
+        <h3>Session Manager! New tab, plus four new promo sets.</h3>
+        <ul class="changes">
+          <li><span class="chip new">New</span><span>Sessions now have their own tab. See every past session's card details, date recorded, and export them at any time.</span></li>
+          <li><span class="chip new">New</span><span>Rename, resume, or delete a session right from the Sessions tab. Mess something up? Optionally remove individual or all cards from the sesssion and/or collection.</span></li>
+          <li><span class="chip new">New</span><span>Export any single session on its own, in whichever format you need, with a summary of what exported and what didn't.</span></li>
+          <li><span class="chip new">New</span><span>Four new promo sets added: P4, Curator's Collection: Heroines, PD1, and Format Coconut — the newest digital-only beta format (it's not a physical release yet but there if you want it).</span></li>
+          <li><span class="chip new">New</span><span>New "Hide Owned" toggle when browsing a set, so you only see what you still need.</span></li>
+          <li><span class="chip imp">Improved</span><span>Promo sets are listed by release date with clearer names, and Dreamborn export now recognizes more of them.</span></li>
+          <li><span class="chip imp">Improved</span><span>Voice capture is now focused on numbered sets and drops support for promo cards. This allows me to improve accuracy without accouting for promo combinations.</span></li>
+          <li><span class="chip fix">Fixed</span><span>A card number that doesn't exist in a set (like a typo on a promo card) could be added to your collection and is now restricted to the catalogue on device. Reduces live api updates but fix for that later.</span></li>
+        </ul>
+      </article>
+
       <article class="rel" data-screen-label="release">
         <div class="rel-dot"></div>
         <div class="rel-head"><span class="ver">v1.2.1</span></div>
@@ -199,7 +190,7 @@
           <li><span class="chip fix">Fixed</span><span>Dreamborn import and export for promo cards, which were intentionally skipped previously.</span></li>
           <li><span class="chip fix">Fixed</span><span>Exported collections could contain duplicate rows, inflating card counts when re-imported elsewhere.</span></li>
           <li><span class="chip fix">Fixed</span><span>iPad layout issues.</span></li>
-
+        </ul>
       </article>
 
       <article class="rel" data-screen-label="release">
